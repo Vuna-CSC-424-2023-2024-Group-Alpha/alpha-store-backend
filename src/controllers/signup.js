@@ -3,6 +3,12 @@ import { generateJWT, hashPassword } from '../helpers/auth.js';
 import { generateUniqueChar } from '../helpers/generateUniqueChars.js';
 import { validateOtpCode, validateSignup } from '../validation/index.js';
 import { otps } from "../db/inMemoryDb.js";
+var postmark = require("postmark");
+
+// Send an email:
+var client = new postmark.ServerClient("9c147ba6-4aca-4bb2-b75a-6eb9854de89c");
+
+
 
 export const SignUpController = async (req, res) => {
     // make sure we have valid inputs from users
@@ -30,7 +36,14 @@ export const SignUpController = async (req, res) => {
     saveOtpForLater(otpCode, validatedData.email)
 
     // send an email to the user with the otp code to veryfy email below
-    res.status(200).json({})
+  
+    client.sendEmail({
+        "From": "Muhammad@haqqman.com",
+        "To": validatedData.email,
+        "Subject": "welcome to haqqman",
+        "TextBody": otpCode
+      });
+      res.status(200).json({})
 }
 
 export const emailVerificationController = async (req, res) => {
