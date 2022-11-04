@@ -1,6 +1,11 @@
 import fs from 'fs/promises'
 import { generateJWT, isPasswordSame } from '../helpers/auth.js';
+import { env } from '../helpers/env.js';
 import { validateLogin } from '../validation/index.js';
+
+// Our mock databse location, replace this with the exact location on your machine
+const mockDbLocation = 'C:/Users/user/Desktop/express-boilerplate-1/src/database/users.json';
+
 
 export const loginController = async (req, res) => {
     // make sure we have valid inputs from users
@@ -35,7 +40,7 @@ export const loginController = async (req, res) => {
 }
 
 const findUserByEmail = async (email) => {
-    let data = await fs.readFile('C:/Users/user/Desktop/express-task/src/db/users.json')
+    let data = await fs.readFile(mockDbLocation)
     if (data) {
         data = JSON.parse(data)
         return data.find((d) => d.email === email)

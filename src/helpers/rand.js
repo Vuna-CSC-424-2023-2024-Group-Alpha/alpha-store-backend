@@ -1,13 +1,14 @@
 import crypto from 'crypto';
-import { otps } from "../db/inMemoryDb.js";
+import { exists } from '../utils/redis.js';
 
-export const generateUniqueChar = async (length) => {
+export const generateUniqueChar = async (length, prefix = '') => {
     const randomChar = generateRandomChar(length);
-    const char = otps[randomChar]
+    let randCharWithPrefix = prefix + randomChar
+    const char = await exists(randCharWithPrefix);
 
-    // the char already exists in memory, we need to recursively regenerate until we generate uniqeue char
+    // the char already exists in redis, we need to recursively regenerate until we generate uniqeue char
     if (char) {
-        randomChar = await generateUniqueChar(length);
+        randomChar = await generateUniqueChar(length, prefix);
     }
     return randomChar;
 }

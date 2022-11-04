@@ -1,19 +1,22 @@
 import fs from 'fs/promises'
 import { generateJWT, hashPassword } from '../helpers/auth.js';
-import { generateUniqueChar } from '../helpers/generateUniqueChars.js';
+import { generateUniqueChar } from '../helpers/rand.js';
 import { validateOtpCode, validateSignup } from '../validation/index.js';
-import { otps } from "../db/inMemoryDb.js";
-var postmark = require("postmark");
+import postmark from 'postmark'
+import { get, setWithExpiration } from '../utils/redis.js';
+import { env } from "../helpers/env.js";
+
+
+
+// Our mock databse location, replace this with the exact location on your machine
+const mockDbLocation = 'C:/Users/user/Desktop/express-boilerplate-1/src/database/users.json';
 
 // Send an email:
-var client = new postmark.ServerClient("9c147ba6-4aca-4bb2-b75a-6eb9854de89c");
-
-
+let client = new postmark.ServerClient("9c147ba6-4aca-4bb2-b75a-6eb9854de89c");
 
 export const SignUpController = async (req, res) => {
     // make sure we have valid inputs from users
     const validatedData = validateSignup(req.body)
-    console.log(otps)
     // query our mock db to check if the user has signup before
     const user = await findUserByEmail(validatedData.email)
     if (user) {
@@ -30,26 +33,28 @@ export const SignUpController = async (req, res) => {
     validatedData.password = await hashPassword(validatedData.password)
     await saveUser(validatedData)
 
-    const otpCode = await generateUniqueChar(6)
+    const otpCode = await generateUniqueChar(6, 'signupVerification:')
 
-    // we can use Redis to save the otpCode for later use, but in our case i am going to save directly to memory
-    saveOtpForLater(otpCode, validatedData.email)
+    // teporary store the otp code in redis
+    await setWithExpiration(`signupVerification:${otpCode}`, 18000, validatedData.email);
 
     // send an email to the user with the otp code to veryfy email below
-  
+    console.log(otpCode)
     client.sendEmail({
-        "From": "Muhammad@haqqman.com",
+        "From": "ibrahimsuleiman1996@gmail.com",
         "To": validatedData.email,
         "Subject": "welcome to haqqman",
         "TextBody": otpCode
-      });
-      res.status(200).json({})
+    });
+    res.status(200).json({})
 }
 
 export const emailVerificationController = async (req, res) => {
     const { otp } = validateOtpCode(req.body)
 
-    if (!otps[otp]) {
+    const email = await get(`signupVerification:${otp}`);
+
+    if (!email) {
         res.status(401)
             .json({
                 success: false,
@@ -57,9 +62,10 @@ export const emailVerificationController = async (req, res) => {
                 data: {}
             });
     }
-    const userEmail = otps[otp]
 
-    const user = findUserByEmail(userEmail)
+    const user = await findUserByEmail(email)
+
+    // you can now activate the user on the database since his email is now verified
 
     // generate jwt and signup the user
     res.status(200).json({
@@ -70,7 +76,7 @@ export const emailVerificationController = async (req, res) => {
 }
 
 const findUserByEmail = async (email) => {
-    let data = await fs.readFile('C:/Users/user/Desktop/express-task/src/db/users.json')
+    let data = await fs.readFile(mockDbLocation)
     if (data) {
         data = JSON.parse(data)
         return data.find((d) => d.email === email)
@@ -80,14 +86,10 @@ const findUserByEmail = async (email) => {
 }
 
 const saveUser = async (user) => {
-    let users = await fs.readFile('C:/Users/user/Desktop/express-task/src/db/users.json')
+    let users = await fs.readFile(mockDbLocation)
     users = JSON.parse(users)
 
     const usersLength = users.length
     users.push({ ...user, id: String(usersLength + 1) })
-    await fs.writeFile('C:/Users/user/Desktop/express-task/src/db/users.json', JSON.stringify(users))
-}
-
-const saveOtpForLater = (otp, userEmail) => {
-    otps[otp] = userEmail
+    await fs.writeFile(mockDbLocation, JSON.stringify(users))
 }
