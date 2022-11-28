@@ -1,6 +1,5 @@
-const isProduction = process.env.NODE_ENV === "production"
+const isTesting = process.env.NODE_ENV === "test"
 
-console.log(process.env.NODE_ENV)
-if (!isProduction)
+if (!isTesting)
   require('husky').install()
 
