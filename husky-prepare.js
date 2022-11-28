@@ -1,5 +1,5 @@
 const isTesting = process.env.NODE_ENV === "test"
 
-if (!isTesting)
+if (isTesting)
   require('husky').install()
 
