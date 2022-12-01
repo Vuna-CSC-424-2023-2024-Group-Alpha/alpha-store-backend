@@ -8,8 +8,8 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3000),
-    DATABASE_URL: Joi.string().required().description('DATABASE URL'),
     DATABASE_NAME: Joi.string().required().description('DATABASE NAME'),
+    DATABASE_URL: Joi.string().required().description('DATABASE URL'),    
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
