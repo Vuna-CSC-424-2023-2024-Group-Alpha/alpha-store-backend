@@ -8,8 +8,9 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3000),
-    DATABASE_URL: Joi.string().required().description('URL of MongoDB'),
-    JWT_SECRET: Joi.string().required().description('JWT Secret Key'),
+    DATABASE_NAME: Joi.string().required().description('DATABASE NAME'),
+    DATABASE_URL: Joi.string().required().description('DATABASE URL'),    
+    JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
     JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
@@ -22,7 +23,7 @@ const envVarsSchema = Joi.object()
     SMTP_PORT: Joi.number().description('port to connect to the email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
     SMTP_USERNAME: Joi.string().description('username for email server'),
-    SMTP_PASSWORD: Joi.string().description('password for email server'),    
+    SMTP_PASSWORD: Joi.string().description('password for email server'),
   })
   .unknown();
 
@@ -41,6 +42,7 @@ module.exports = {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      dbName: envVars.DATABASE_NAME,
     },
   },
   jwt: {
