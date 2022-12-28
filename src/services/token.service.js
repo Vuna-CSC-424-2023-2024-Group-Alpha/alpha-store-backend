@@ -6,6 +6,16 @@ const userService = require('./user.service');
 const { Token } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
+const _ = require('lodash');
+
+/**
+ * Check if token has expired
+ * @returns {boolean}
+ */
+const hasExpired = (tokenDoc) => {
+  const expiresIn = moment().diff(tokenDoc.createdAt, 'minutes');
+  return expiresIn >= config.jwt.verifyEmailExpirationMinutes;
+};
 
 /**
  * Generate token
@@ -52,11 +62,27 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
  * @returns {Promise<Token>}
  */
 const verifyToken = async (token, type) => {
+  if (type === tokenTypes.VERIFY_EMAIL) aco;
   const payload = jwt.verify(token, config.jwt.secret);
   const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new Error('Token not found');
   }
+  return tokenDoc;
+};
+
+/**
+ * Verify code and return token doc (or throw an error if it is not valid)
+ * @param {string} code
+ * @param {string} type
+ * @returns {Promise<Token>}
+ */
+const verifyCode = async (code, userId) => {
+  const tokenDoc = await Token.findOne({ token: code, type: tokenTypes.VERIFY_EMAIL, user: userId, blacklisted: false });
+  if (!tokenDoc) {
+    throw new Error('Token not found');
+  }
+  if (hasExpired(tokenDoc)) throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
   return tokenDoc;
 };
 
@@ -93,7 +119,7 @@ const generateAuthTokens = async (user) => {
 const generateResetPasswordToken = async (email) => {
   const user = await userService.getUserByEmail(email);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'No users found with this email');
+    throw new ApiError(httpStatus.NOT_FOUND, 'No user found with this email');
   }
   const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
   const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
@@ -102,22 +128,37 @@ const generateResetPasswordToken = async (email) => {
 };
 
 /**
- * Generate verify email token
+ * Generate verify email code
  * @param {User} user
  * @returns {Promise<string>}
  */
-const generateVerifyEmailToken = async (user) => {
+const generateVerifyEmailCode = async (user) => {
+  const previousTokens = await Token.find({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
+  let previousToken = null;
+  for (const token of previousTokens) {
+    if (hasExpired(token)) {
+      await Token.deleteOne({ _id: token.id });
+    }
+    previousToken = token;
+  }
+
+  if (previousToken) {
+    const expiresIn = moment().diff(previousToken.createdAt, 'minutes');
+    throw new ApiError(httpStatus.BAD_REQUEST, `We recieved your request too often. Please wait ${expiresIn} minute (s)`);
+  }
+
+  const code = _.random(100000, 999999);
   const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-  const verifyEmailToken = generateToken(user.id, expires, tokenTypes.VERIFY_EMAIL);
-  await saveToken(verifyEmailToken, user.id, expires, tokenTypes.VERIFY_EMAIL);
-  return verifyEmailToken;
+  await saveToken(code, user.id, expires, tokenTypes.VERIFY_EMAIL);
+  return code;
 };
 
 module.exports = {
   generateToken,
   saveToken,
   verifyToken,
+  verifyCode,
   generateAuthTokens,
   generateResetPasswordToken,
-  generateVerifyEmailToken,
+  generateVerifyEmailCode,
 };
