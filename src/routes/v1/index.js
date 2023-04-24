@@ -1,7 +1,8 @@
 const express = require('express');
 const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
-const consoleUserRoute = require('./console.user.route')
+const consoleAuthRoute = require('./console.auth.route');
+const consoleUserRoute = require('./console.user.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -16,6 +17,14 @@ const defaultRoutes = [
     path: '/users',
     route: userRoute,
   },
+  {
+    path: '/console/auth',
+    route: consoleAuthRoute,
+  },
+  {
+    path: '/console/teams',
+    route: consoleUserRoute,
+  },
 ];
 
 const devRoutes = [
@@ -25,6 +34,7 @@ const devRoutes = [
     route: docsRoute,
   },
 ];
+
 
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);

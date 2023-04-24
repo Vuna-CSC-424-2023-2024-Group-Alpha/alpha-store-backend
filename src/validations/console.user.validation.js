@@ -1,4 +1,4 @@
-const Joi = require('joi').extend(require('joi/date'));
+const Joi = require('joi').extend(require('@joi/date'));
 const { password, objectId } = require('./custom.validation');
 const { roles } = require('../config/roles');
 
