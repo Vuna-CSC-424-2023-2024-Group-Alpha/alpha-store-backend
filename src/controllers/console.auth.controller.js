@@ -8,10 +8,9 @@ const login = catchAsync(async (req, res) => {
   const user = await consoleAuthService.loginConsoleUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   const otp = await tokenService.generateUserAccessOTP(user);
-  // const activeHostel = await hostelService.getHostelById(user.activeHostel);
   // send otp to console user email
   await emailService.VerifyConsoleUserAccessWithOTP({
-// 
+// email parameters to be defined here
   });
   res.send({ user, tokens });
 });
