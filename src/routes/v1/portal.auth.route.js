@@ -1,35 +1,35 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
-const authValidation = require('../../validations/auth.validation');
-const authController = require('../../controllers/auth.controller');
+const portalAuthValidation = require('../../validations/portal.auth.validation');
+const portalAuthController = require('../../controllers/portal.auth.controller');
 const auth = require('../../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/create-account', validate(authValidation.createAccount), authController.createAccount);
-router.post('/login', validate(authValidation.login), authController.login);
-router.post('/logout', validate(authValidation.logout), authController.logout);
-router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
-router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
-router.put('/reset-password/:token', validate(authValidation.setNewPassword), authController.setNewPassword);
-router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
-router.post('/verify-email', auth(), validate(authValidation.verifyEmail), authController.verifyEmail);
+router.post('/create-account', validate(portalAuthValidation.createAccount), portalAuthController.createAccount);
+router.post('/login', validate(portalAuthValidation.login), portalAuthController.login);
+router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
+router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), portalAuthController.refreshTokens);
+router.post('/reset-password', validate(portalAuthValidation.resetPassword), portalAuthController.resetPassword);
+router.put('/reset-password/:token', validate(portalAuthValidation.setNewPassword), portalAuthController.setNewPassword);
+router.post('/send-verification-email', auth(), portalAuthController.sendVerificationEmail);
+router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Auth
+ *   name: Portal Auth
  *   description: Authentication
  */
 
 /**
  * @swagger
- * /auth/register:
+ * /portal/auth/create-account:
  *   post:
  *     summary: Register as user
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -37,11 +37,14 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - name
+ *               - firstName
+ *               - lastName
  *               - email
  *               - password
  *             properties:
- *               name:
+ *               firstName:
+ *                 type: string
+ *               lastName:
  *                 type: string
  *               email:
  *                 type: string
@@ -53,7 +56,8 @@ module.exports = router;
  *                 minLength: 8
  *                 description: At least one number and one letter
  *             example:
- *               name: fake name
+ *               firstName: John
+ *               lastName: Doe
  *               email: fake@example.com
  *               password: password1
  *     responses:
@@ -74,10 +78,10 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/login:
+ * /portal/auth/login:
  *   post:
  *     summary: Login
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -122,10 +126,10 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/logout:
+ * /portal/auth/logout:
  *   post:
  *     summary: Logout
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -148,10 +152,10 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/refresh-tokens:
+ * /portal/auth/refresh-tokens:
  *   post:
  *     summary: Refresh auth tokens
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -178,11 +182,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/forgot-password:
+ * /portal/auth/forgot-password:
  *   post:
  *     summary: Forgot password
  *     description: An email will be sent to reset password.
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -206,10 +210,10 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/reset-password:
+ * /portal/auth/reset-password:
  *   post:
  *     summary: Reset password
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     parameters:
  *       - in: query
  *         name: token
@@ -249,11 +253,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/send-verification-email:
+ * /portal/auth/send-verification-email:
  *   post:
  *     summary: Send verification email
  *     description: An email will be sent to verify email.
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -265,10 +269,10 @@ module.exports = router;
 
 /**
  * @swagger
- * /auth/verify-email:
+ * /portal/auth/verify-email:
  *   post:
  *     summary: verify email
- *     tags: [Auth]
+ *     tags: [Portal Auth]
  *     parameters:
  *       - in: query
  *         name: token

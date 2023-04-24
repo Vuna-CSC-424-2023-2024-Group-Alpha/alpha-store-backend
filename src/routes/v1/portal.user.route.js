@@ -1,38 +1,38 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
-const userController = require('../../controllers/user.controller');
+const portalUserValidation = require('../../validations/portal.user.validation');
+const portalUserController = require('../../controllers/portal.user.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
+  .post(auth('manageUsers'), validate(portalUserValidation.createUser), portalUserController.createUser)
+  .get(auth('getUsers'), validate(portalUserValidation.getUsers), portalUserController.getUsers);
 
 router
   .route('/:userId')
-  .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
-  .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+  .get(auth('getUsers'), validate(portalUserValidation.getUser), portalUserController.getUser)
+  .patch(auth('manageUsers'), validate(portalUserValidation.updateUser), portalUserController.updateUser)
+  .delete(auth('manageUsers'), validate(portalUserValidation.deleteUser), portalUserController.deleteUser);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Users
+ *   name: Portal Users
  *   description: User management and retrieval
  */
 
 /**
  * @swagger
- * /users:
+ * /portal/users:
  *   post:
  *     summary: Create a user
  *     description: Only admins can create other users.
- *     tags: [Users]
+ *     tags: [Portal Users]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -83,7 +83,7 @@ module.exports = router;
  *   get:
  *     summary: Get all users
  *     description: Only admins can retrieve all users.
- *     tags: [Users]
+ *     tags: [Portal Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -148,11 +148,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /users/{id}:
+ * /portal/users/{id}:
  *   get:
  *     summary: Get a user
  *     description: Logged in users can fetch only their own user information. Only admins can fetch other users.
- *     tags: [Users]
+ *     tags: [Portal Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -179,7 +179,7 @@ module.exports = router;
  *   patch:
  *     summary: Update a user
  *     description: Logged in users can only update their own information. Only admins can update other users.
- *     tags: [Users]
+ *     tags: [Portal Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -230,7 +230,7 @@ module.exports = router;
  *   delete:
  *     summary: Delete a user
  *     description: Logged in users can delete only themselves. Only admins can delete other users.
- *     tags: [Users]
+ *     tags: [Portal Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:

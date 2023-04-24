@@ -1,6 +1,6 @@
 const express = require('express');
-const authRoute = require('./auth.route');
-const userRoute = require('./user.route');
+const portalAuthRoute = require('./portal.auth.route');
+const portalUserRoute = require('./portal.user.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -8,12 +8,12 @@ const router = express.Router();
 
 const defaultRoutes = [
   {
-    path: '/auth',
-    route: authRoute,
+    path: '/portal/auth',
+    route: portalAuthRoute,
   },
   {
-    path: '/users',
-    route: userRoute,
+    path: '/portal/users',
+    route: portalUserRoute,
   },
 ];
 
