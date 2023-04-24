@@ -8,9 +8,7 @@ const createConsoleUser = {
     password: Joi.string().required().custom(password),
     firstName: Joi.string().required(),
     lastNam: Joi.string().required(),
-    role: Joi.string()
-      .required()
-      .valid(...roles),
+    role: Joi.string().valid(...roles),
     status: Joi.string().valid(...['active', 'inactive']),
     dateOfBirth: Joi.date().format('DD-MM-YYYY'),
     gender: Joi.string().valid(...['Male', 'Female']),

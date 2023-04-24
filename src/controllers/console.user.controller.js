@@ -6,7 +6,7 @@ const { consoleUserService, emailService, tokenService } = require('../services'
 const getConsoleUser = catchAsync(async (req, res) => {
   const user = await consoleUserService.getConsoleUserById(req.params.consoleUserId);
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Console user not found');
   }
   res.send(user);
 });
@@ -20,14 +20,12 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
   // check if user with email already exists
   const user = await consoleUserService.getConsoleUserByEmail(req.body.email);
   if (user) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Duplicate Email');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Duplicate Workmail');
   }
   const { email, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
-  // get active hostel from currently logged in user
-  // const activeHostel = await hostelService.getHostelById(req.user.activeHostel);
   await emailService.InviteConsoleUser({
-    // Construct email parameter here
+    // TODO: Implement InviteConsoleUser Email
   });
 
   res.status(httpStatus.NO_CONTENT).send();

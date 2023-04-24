@@ -9,7 +9,7 @@ const ApiError = require('../utils/ApiError');
  */
 const createConsoleUser = async (body) => {
   if (await ConsoleUser.isEmailTaken(body.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Workmail already taken');
   }
   const newConsoleUser = new ConsoleUser(body);
   newConsoleUser.save();
@@ -46,7 +46,7 @@ const updateConsoleUserById = async (userId, updateBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Console User not found');
   }
   if (updateBody.email && (await ConsoleUser.isEmailTaken(updateBody.email, userId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Workmail already taken');
   }
   Object.assign(consoleUser, updateBody);
   await consoleUser.save();

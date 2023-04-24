@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 
-const { consoleAuthService, authService, tokenService, emailService, hostelService } = require('../services');
+const { consoleAuthService, authService, tokenService, emailService } = require('../services');
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
@@ -10,7 +10,7 @@ const login = catchAsync(async (req, res) => {
   const otp = await tokenService.generateUserAccessOTP(user);
   // send otp to console user email
   await emailService.VerifyConsoleUserAccessWithOTP({
-// email parameters to be defined here
+    // TODO: Implement consoleUserAccessWithOTP email
   });
   res.send({ user, tokens });
 });

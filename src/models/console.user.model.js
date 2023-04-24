@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 const bcrypt = require('bcryptjs');
-// import { nanoid } from 'nanoid';
 const shortid = require('shortid');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
@@ -81,22 +81,6 @@ const consoleUserSchema = mongoose.Schema(
     location: {
       type: String,
     },
-
-    // notificationOptions: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Console_Notification',
-    // },
-
-    // activeHostel: {
-    //   type: [
-    //     {
-    //       type: mongoose.Schema.Types.ObjectId,
-    //       ref: 'Hostel',
-    //       required: true,
-    //     },
-    //   ],
-    //   validate: (v) => Array.isArray(v) && v.length > 0,
-    // },
   },
   {
     timestamps: true,
@@ -107,17 +91,16 @@ const consoleUserSchema = mongoose.Schema(
 consoleUserSchema.plugin(toJSON);
 consoleUserSchema.plugin(paginate);
 
-
 /**
- * Check if email is taken
+ * Check if workmail is taken
  * @param {string} email - The console user's email
  * @param {import('mongoose').ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns { Promise<boolean>}
  */
 
 consoleUserSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-    const consoleUser = await this.findOne({ email, _id: { $ne: excludeUserId } });
-    return !!consoleUser;
+  const consoleUser = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!consoleUser;
 };
 
 /**
@@ -130,19 +113,14 @@ consoleUserSchema.methods.isPasswordMatch = async function (password) {
   return bcrypt.compare(password, consoleUser.password);
 };
 
-
 consoleUserSchema.pre('save', async function (next) {
   const consoleUser = this;
   if (consoleUser.isModified('password')) {
     consoleUser.password = await bcrypt.hash(consoleUser.password, 8);
   }
 
-  // set activeHostel to the first hostel in hostels
-  // consoleUser.activeHostel = consoleUser.hostels[0];
-
-  next()
+  next();
 });
-
 
 /**
  * @typedef User

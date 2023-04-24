@@ -1,12 +1,10 @@
 const httpStatus = require('http-status');
-// const parser = require('tld-extract');
 const tokenService = require('./token.service');
 const ApiError = require('../utils/ApiError');
 const consoleUserService = require('./console.user.service');
 const { tokenTypes } = require('../config/tokens');
-// const { otpTypes } = require('../config/otps');
 const { Token } = require('../models');
-// const blockedDomains = require('../config/blocked.email.domains');
+const blockedDomains = require('../config/blocked.email.domains');
 
 /**
  * Login with username and password
@@ -15,13 +13,13 @@ const { Token } = require('../models');
  * @returns {Promise<ConsoleUser>}
  */
 const loginConsoleUserWithEmailAndPassword = async (email, password) => {
-  // if (hasBlockedDomain(email)) {
-  //   throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid email domain');
-  // }
+  if (hasBlockedDomain(email)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid workmail domain');
+  }
 
   const consoleUser = await consoleUserService.getConsoleUserByEmail(email);
   if (!consoleUser || !(await consoleUser.isPasswordMatch(password))) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect workmail or password');
   }
   return consoleUser;
 };
@@ -66,16 +64,16 @@ const verifyOTP = async (otp, userId) => {
   }
 };
 
-// const hasBlockedDomain = (email) => {
-//   for (let blockedDomain of blockedDomains) {
-//     const fullAddress = 'http://' + email.split('@').pop();
-//     const { domain } = parser(fullAddress);
-//     if (domain === blockedDomain) {
-//       return true;
-//     }
-//   }
-//   return false;
-// };
+const hasBlockedDomain = (email) => {
+  for (let blockedDomain of blockedDomains) {
+    const fullAddress = 'http://' + email.split('@').pop();
+    const { domain } = parser(fullAddress);
+    if (domain === blockedDomain) {
+      return true;
+    }
+  }
+  return false;
+};
 
 module.exports = {
   loginConsoleUserWithEmailAndPassword,
