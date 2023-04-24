@@ -11,3 +11,6 @@ router.post('/logout', validate(authValidation.logout), consoleAuthController.lo
 router.post('/reset-password', validate(authValidation.resetPassword), consoleAuthController.resetPassword);
 router.put('/reset-password/:token', validate(authValidation.setNewPassword), consoleAuthController.setNewPassword);
 router.post('/verify-otp', auth(), validate(authValidation.verifyAccessOTP), consoleAuthController.verifyOTP);
+
+
+module.exports = router;
