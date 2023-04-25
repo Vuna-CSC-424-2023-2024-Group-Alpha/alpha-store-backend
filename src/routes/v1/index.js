@@ -27,8 +27,6 @@ const defaultRoutes = [
   },
 ];
 
-
-
 const devRoutes = [
   // routes available only in development mode
   {
@@ -36,20 +34,6 @@ const devRoutes = [
     route: docsRoute,
   },
 ];
-
-router.get('/health', (req, res) => {
-  const healthCheck = {
-    uptime: process.uptime(),
-    message: 'OK',
-    timestamp: Date.now(),
-  };
-  try {
-    res.status(200).json(healthCheck);
-  } catch (error) {
-    healthCheck.message = error;
-    res.status(503).send();
-  }
-});
 
 
 defaultRoutes.forEach((route) => {
