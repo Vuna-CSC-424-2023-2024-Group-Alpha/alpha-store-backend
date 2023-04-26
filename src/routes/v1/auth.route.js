@@ -16,7 +16,7 @@ router.post('/send-verification-email', auth(), authController.sendVerificationE
 router.post('/verify-email', auth(), validate(authValidation.verifyEmail), authController.verifyEmail);
 
 module.exports = router;
-
+ 
 /**
  * @swagger
  * tags:
