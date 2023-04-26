@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const parser = require('tld-extract');
 const tokenService = require('./token.service');
 const ApiError = require('../utils/ApiError');
 const consoleUserService = require('./console.user.service');
