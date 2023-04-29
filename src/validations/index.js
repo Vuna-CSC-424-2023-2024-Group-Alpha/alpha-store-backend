@@ -1,3 +1,4 @@
-module.exports.authValidation = require('./auth.validation');
-module.exports.userValidation = require('./user.validation');
-module.exports.consoleUserValidation = require('./user.validation');
+module.exports.portalAuthValidation = require('./portal.auth.validation');
+module.exports.portalUserValidation = require('./portal.user.validation');
+module.exports.consoleAuthValidation = require('./console.auth.validation');
+module.exports.consoleUserValidation = require('./console.user.validation');

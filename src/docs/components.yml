@@ -1,6 +1,6 @@
 components:
   schemas:
-    User:
+    PortalUser:
       type: object
       properties:
         id:
@@ -8,15 +8,18 @@ components:
         email:
           type: string
           format: email
-        name:
+        firstName:
+          type: string
+        lastName:
           type: string
         role:
           type: string
-          enum: [user, admin]
+          enum: [manager, collaborator]
       example:
         id: 5ebac534954b54139806c112
         email: fake@example.com
-        name: fake name
+        firstName: John
+        lastName: Doe
         role: user
 
     Token:
