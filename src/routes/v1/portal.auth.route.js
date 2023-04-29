@@ -16,7 +16,7 @@ router.post('/send-verification-email', auth(), portalAuthController.sendVerific
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
 
 module.exports = router;
-
+ 
 /**
  * @swagger
  * tags:

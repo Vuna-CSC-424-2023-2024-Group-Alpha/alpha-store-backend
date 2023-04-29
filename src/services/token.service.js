@@ -82,7 +82,10 @@ const verifyCode = async (code, userId) => {
   if (!tokenDoc) {
     throw new Error('Token not found');
   }
-  if (hasExpired(tokenDoc)) throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
+  if (hasExpired(tokenDoc)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
+  }
+  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
   return tokenDoc;
 };
 
@@ -94,7 +97,6 @@ const verifyCode = async (code, userId) => {
 const generateAuthTokens = async (user) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
-
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
   const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
   await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
@@ -133,24 +135,92 @@ const generateResetPasswordToken = async (email) => {
  * @returns {Promise<string>}
  */
 const generateVerifyEmailCode = async (user) => {
-  const previousTokens = await Token.find({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
-  let previousToken = null;
-  for (const token of previousTokens) {
-    if (hasExpired(token)) {
-      await Token.deleteOne({ _id: token.id });
-    }
-    previousToken = token;
-  }
-
-  if (previousToken) {
-    const expiresIn = moment().diff(previousToken.createdAt, 'minutes');
-    throw new ApiError(httpStatus.BAD_REQUEST, `We recieved your request too often. Please wait ${expiresIn} minute (s)`);
-  }
+  // delete previous verify email code to invalidate it
+  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
 
   const code = _.random(100000, 999999);
   const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
   await saveToken(code, user.id, expires, tokenTypes.VERIFY_EMAIL);
   return code;
+};
+
+//Start of OTP user  related methods
+/**
+ * Check if otp has expired
+ * @returns {boolean}
+ */
+const hasOTPExpired = (otpDoc) => {
+  const expiresIn = moment().diff(otpDoc.createdAt, 'minutes');
+  return expiresIn >= config.jwt.verifyOTPExpirationMinutes;
+};
+
+// Method to save OTP
+const saveOTP = async (otp, userId, expires, type, blacklisted = false) => {
+  const otpDoc = await Token.create({
+    otp,
+    user: userId,
+    expires: expires.toDate(),
+    type,
+    blacklisted,
+  });
+  return otpDoc;
+};
+
+// Method to generate  OTP
+/**
+ * Generate verify access otp
+ * @param {User} user
+ * @returns {Promise<string>}
+ */
+const generateUserAccessOTP = async (user) => {
+  // delete previous otp to invalidate it
+  await Token.deleteOne({ user: user.id });
+  const otp = _.random(100000, 999999);
+  const expires = moment().add(config.jwt.verifyOTPExpirationMinutes, 'minutes');
+  await saveOTP(otp, user.id, expires, tokenTypes.VERIFY_ACCESS);
+  return otp;
+};
+
+/**
+ * Verify OTP and return OTP doc (or throw an error if it is not valid)
+ * @param {string} userOTP
+ * @param {string} type
+ * @returns {Promise<Token>}
+ */
+const verifyAccessOTP = async (userOTP, userId) => {
+  const otpDoc = await Token.findOne({ otp: userOTP, type: tokenTypes.VERIFY_ACCESS, user: userId, blacklisted: false });
+  if (!otpDoc) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'OTP not found');
+  }
+  if (hasOTPExpired(otpDoc)) throw new ApiError(httpStatus.BAD_REQUEST, 'OTP expired!');
+  // delete now invalid otp
+  await Token.deleteOne({ _id: otpDoc.id });
+  return otpDoc;
+};
+
+// Start of Console User Token
+/**
+ * Generate invite console user token
+ * @param {object} payload (contains role, firstName, lastName, email)
+ * @returns {Promise<string>}
+ */
+const generateInviteConsoleUserToken = async (payload) => {
+  const JWTPayload = {
+    ...payload,
+    iat: moment().unix(),
+    exp: moment().add(72, 'hours'),
+    type: tokenTypes.INVITE_CONSOLE_USER,
+  };
+  return jwt.sign(payload, config.jwt.secret);
+};
+
+/**
+ * Generate invite console user token
+ * @param {string} token (token from accept invite)
+ * @returns {Promise<object>} (containing role, firstName, lastName, email...)
+ */
+const generateConsoleUserPayloadFromToken = async (token) => {
+  return jwt.verify(token, config.jwt.secret);
 };
 
 module.exports = {
@@ -161,4 +231,8 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailCode,
+  generateUserAccessOTP,
+  verifyAccessOTP,
+  generateInviteConsoleUserToken,
+  generateConsoleUserPayloadFromToken,
 };

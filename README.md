@@ -6,13 +6,7 @@ Run a single command to deploy and configure a production-ready Node powered API
 
 ## Quick Start
 
-To create a project, simply run:
-
-```bash
-npx create-nodejs-express-app <project-name>
-```
-
-Or
+To deploy the API, simply run:
 
 ```bash
 npm init nodejs-express-app <project-name>
@@ -25,15 +19,20 @@ If you would still prefer to do the installation manually, follow these steps:
 Clone the repo:
 
 ```bash
-git clone --depth 1 https://github.com/haqqman/express-boilerplate.git
-cd node-express-boilerplate
+git clone --depth 1 https://github.com/haqqman/hostelcloud-api.git
+cd hostelcloud-api
 npx rimraf ./.git
 ```
 
 Install the dependencies:
 
 ```bash
-yarn install
+npm install
+```
+Update the dependencies:
+
+```bash
+npm update
 ```
 
 Set the environment variables:
@@ -58,7 +57,8 @@ cp .env.example .env
 - [Logging](#logging)
 - [Custom Mongoose Plugins](#custom-mongoose-plugins)
 - [Linting](#linting)
-- [Contributing](#contributing)
+- [Seeding](#seeding)
+- [Bug Reports](#bug-report)
 
 ## Features
 
@@ -70,14 +70,13 @@ cp .env.example .env
 - **Error handling**: centralized error handling mechanism
 - **API documentation**: with Swagger
 - **Process management**: advanced production process management using [PM2](https://pm2.keymetrics.io)
-- **Dependency management**: with [Yarn](https://yarnpkg.com)
+- **Dependency management**: with [NPM](https://npmjs.com)
 - **Environment variables**: using [dotenv](https://github.com/motdotla/dotenv) and [cross-env](https://github.com/kentcdodds/cross-env#readme)
 - **Security**: set security HTTP headers using [helmet](https://helmetjs.github.io)
 - **Santizing**: sanitize request data against xss and query injection
 - **CORS**: Cross-Origin Resource-Sharing enabled using [cors](https://github.com/expressjs/cors)
 - **Compression**: gzip compression with [compression](https://github.com/expressjs/compression)
 - **CI**: continuous integration with [Travis CI](https://travis-ci.org)
-- **Docker support**
 - **Code coverage**: using [coveralls](https://coveralls.io)
 - **Code quality**: with [Codacy](https://www.codacy.com)
 - **Git hooks**: with [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
@@ -89,29 +88,29 @@ cp .env.example .env
 Running locally:
 
 ```bash
-yarn dev
+npm dev
 ```
 
 Running in production:
 
 ```bash
-yarn start
+npm start
 ```
 
 Linting:
 
 ```bash
 # run ESLint
-yarn lint
+npm lint
 
 # fix ESLint errors
-yarn lint:fix
+npm lint:fix
 
 # run prettier
-yarn prettier
+npm prettier
 
 # fix prettier errors
-yarn prettier:fix
+npm prettier:fix
 ```
 
 ## Environment Variables
@@ -123,7 +122,7 @@ The environment variables can be found and modified in the `.env.example` file w
 PORT=3000
 
 # URL of the Mongo DB
-MONGODB_URL=mongodb://127.0.0.1:27017/node-boilerplate
+MONGODB_URL=mongodb://127.0.0.1:27017/example
 
 # JWT
 # JWT secret key
@@ -168,7 +167,7 @@ To view the list of available APIs and their specifications, run the server and 
 List of available default routes:
 
 **Auth routes**:\
-`POST /v1/auth/register` - register\
+`POST /v1/auth/create-account` - register\
 `POST /v1/auth/login` - login\
 `POST /v1/auth/refresh-tokens` - refresh auth tokens\
 `POST /v1/auth/forgot-password` - send reset password email\
@@ -185,7 +184,7 @@ List of available default routes:
 
 ## Error Handling
 
-This Boilerplate has a centralized error handling mechanism.
+This API has a centralized error handling mechanism.
 
 Controllers should try to catch the errors and forward them to the error handling middleware (by calling `next(error)`). For convenience, you can also wrap the controller inside the catchAsync utility wrapper, which forwards the error.
 
@@ -395,15 +394,27 @@ To prevent a certain file or directory from being linted, add it to `.eslintigno
 
 To maintain a consistent coding style across different IDEs, the project contains `.editorconfig`
 
+## Seeding
+To seed the database with default data, run the following command:
+```bash
+node src/seeds/ seed
+```
+Running the above command seeds the database with default data, unmodified data are simply
+ignored.
+
 ## Contributing
 
 Contributions are more than welcome! Please check out the [contributing guide](CONTRIBUTING.md).
 
-## Inspired by
+## API Compliance
 
-- [danielfsousa/express-rest-es2017-boilerplate](https://github.com/danielfsousa/express-rest-es2017-boilerplate)
-- [madhums/node-express-mongoose](https://github.com/madhums/node-express-mongoose)
-- [kunalkapadia/express-mongoose-es6-rest-api](https://github.com/kunalkapadia/express-mongoose-es6-rest-api)
+- [Abdulhaqq Sule](https://linqman.com/suleinsights)
+
+## Contributors
+
+- [Abdulhaqq Sule](https://linqman.com/suleinsights)
+- [Michael Umeokoli](https://linqman.com/mikey247)
+- [Abubakar Usman](https://linqman.com/namikaze)
 
 ## License
 
