@@ -110,7 +110,7 @@ module.exports = router;
  *               type: object
  *               properties:
  *                 user:
- *                   $ref: '#/components/schemas/User'
+ *                   $ref: '#/components/schemas/Portal_User'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "401":

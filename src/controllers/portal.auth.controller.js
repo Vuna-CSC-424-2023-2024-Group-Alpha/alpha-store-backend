@@ -13,6 +13,13 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await portalAuthService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
+  // send user OTP
+  const accessOTP = await tokenService.generateUserAccessOTP(user);
+  await emailService.VerifyPortalUserAccessWithOTP({
+    to: user.email,
+    firstName: user.firstName,
+    otp: accessOTP,
+  });
   res.send({ user, tokens });
 });
 

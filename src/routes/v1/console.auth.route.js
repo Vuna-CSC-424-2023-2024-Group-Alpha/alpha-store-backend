@@ -17,38 +17,37 @@ module.exports = router;
 /**
  * @swagger
  * tags:
- *  name: Console Auth
- * description:  Authenticate the Console User
+ *   name: Console Auth
+ *   description: Console User Authentication
  */
 
 /**
  * @swagger
  * /console/auth/login:
- * post:
- * summary: Login Console User
- * description: Login the console user, on successful login, an OTP is sent the registered user's email attempting to login. The user will be verifie using the OTP to gain access to  console.
- * tags: [Console Auth]
- * requestBody:
- *           required:
- *                  true
- *              content:
- *                  application/json:
- *                    schema:
- *                          type: object
- *                          required:
- *                          - email
- *                          - password
+ *   post:
+ *     summary: Login
+ *     description: Login user (console user), on successful login, an OTP is sent to the user's email, with which they'll verify their access to the console.
+ *     tags: [Console Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
- *              email:
+ *               email:
  *                 type: string
  *                 format: email
  *               password:
  *                 type: string
- *                 format: P@ssw0rd!
- *               example:
- *               email: fake@example.com
+ *                 format: password
+ *             example:
+ *               email: webmanager@haqqman.agency
  *               password: P@ssw0rd!
- *      responses:
+ *     responses:
  *       "200":
  *         description: OK
  *         content:
@@ -60,16 +59,16 @@ module.exports = router;
  *                   $ref: '#/components/schemas/User'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
- *          "401":
- *         description: Unauthorized
- *          content:
+ *       "401":
+ *         description: Invalid email or password
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               code: 401
  *               message: Invalid email or password
- *        "400":
+ *       "400":
  *         description: Invalid email domain
  *         content:
  *           application/json:
@@ -83,23 +82,23 @@ module.exports = router;
 /**
  * @swagger
  * /console/auth/logout:
- * post:
- * summary: Logout
- *  tags: [Console Auth]
- *    requestBody:
- *        required: true
- *      content:
- *    application/json:
- *    schema:
+ *   post:
+ *     summary: Logout
+ *     tags: [Console Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
  *             type: object
  *             required:
  *               - refreshToken
  *             properties:
  *               refreshToken:
  *                 type: string
- *         example:
- *                refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.         m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
- *  responses:
+ *             example:
+ *               refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+ *     responses:
  *       "204":
  *         description: No content
  *       "404":
@@ -109,8 +108,8 @@ module.exports = router;
 /**
  * @swagger
  * /console/auth/reset-password:
- * post:
- *  summary: Reset password
+ *   post:
+ *     summary: Reset password
  *     description: An email will be sent to reset password.
  *     tags: [Console Auth]
  *     requestBody:
@@ -136,9 +135,9 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/auth/reset-password/(token):
- * put:
- *  summary: Reset password verify
+ * /console/auth/reset-password/{token}:
+ *   put:
+ *     summary: Reset password verify
  *     tags: [Console Auth]
  *     parameters:
  *       - in: path

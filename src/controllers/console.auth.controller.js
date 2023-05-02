@@ -10,7 +10,9 @@ const login = catchAsync(async (req, res) => {
   const otp = await tokenService.generateUserAccessOTP(user);
   // send otp to console user email
   await emailService.VerifyConsoleUserAccessWithOTP({
-    // TODO: Implement consoleUserAccessWithOTP email
+    to: user.email,
+    firstName: user.firstName,
+    otp: otp,
   });
   res.send({ user, tokens });
 });
