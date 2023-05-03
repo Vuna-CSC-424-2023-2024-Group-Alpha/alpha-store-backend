@@ -54,7 +54,6 @@ const PasswordResetSuccessful = async (payload) => {
 };
 
 // Sends an OTP to grant access to an existing portal user.
-// Used in portal.auth.controller.js
 const VerifyPortalUserAccessWithOTP = async (payload) => {
   const { to, firstName, otp } = payload;
 
@@ -71,7 +70,6 @@ const VerifyPortalUserAccessWithOTP = async (payload) => {
 };
 
 // Sends an OTP to grant access to an existing console user.
-// Used in console.auth.controller.js
 const VerifyConsoleUserAccessWithOTP = async (payload) => {
   const { to, firstName, otp } = payload;
 
@@ -88,7 +86,6 @@ const VerifyConsoleUserAccessWithOTP = async (payload) => {
 };
 
 // Sends email inviting a console user to join a team
-// Used in the console.user.controller to invite console user
 const InviteConsoleUser = async (payload) => {
   const { to, firstName, token } = payload;
   client.sendEmailWithTemplate({

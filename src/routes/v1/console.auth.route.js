@@ -25,8 +25,8 @@ module.exports = router;
  * @swagger
  * /console/auth/login:
  *   post:
- *     summary: Login
- *     description: Login console user on successful login, an OTP is sent to the user's email, with which they'll verify their access to the console.
+ *     summary: Log in
+ *     description: Grants access to existing console user, and on successful confirmation of the workmail, an OTP is sent to the workmail to verify their access to the console.
  *     tags: [Console Auth]
  *     requestBody:
  *       required: true
@@ -56,7 +56,7 @@ module.exports = router;
  *               type: object
  *               properties:
  *                 user:
- *                   $ref: '#/components/schemas/ConsoleUser'
+ *                   $ref: '#/components/schemas/Console_User'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "401":
