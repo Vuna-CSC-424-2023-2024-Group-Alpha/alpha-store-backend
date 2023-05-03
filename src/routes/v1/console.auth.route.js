@@ -26,7 +26,7 @@ module.exports = router;
  * /console/auth/login:
  *   post:
  *     summary: Login
- *     description: Login user (console user), on successful login, an OTP is sent to the user's email, with which they'll verify their access to the console.
+ *     description: Login console user on successful login, an OTP is sent to the user's email, with which they'll verify their access to the console.
  *     tags: [Console Auth]
  *     requestBody:
  *       required: true
@@ -45,7 +45,7 @@ module.exports = router;
  *                 type: string
  *                 format: password
  *             example:
- *               email: webmanager@haqqman.agency
+ *               email: workmail@example.com
  *               password: P@ssw0rd!
  *     responses:
  *       "200":
@@ -56,7 +56,7 @@ module.exports = router;
  *               type: object
  *               properties:
  *                 user:
- *                   $ref: '#/components/schemas/User'
+ *                   $ref: '#/components/schemas/ConsoleUser'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "401":
@@ -137,7 +137,7 @@ module.exports = router;
  * @swagger
  * /console/auth/reset-password/{token}:
  *   put:
- *     summary: Reset password verify
+ *     summary: Verify new password
  *     tags: [Console Auth]
  *     parameters:
  *       - in: path

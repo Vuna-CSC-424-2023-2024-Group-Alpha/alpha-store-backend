@@ -174,10 +174,12 @@ const saveOTP = async (otp, userId, expires, type, blacklisted = false) => {
  */
 const generateUserAccessOTP = async (user) => {
   // delete previous otp to invalidate it
-  await Token.deleteOne({ user: user.id });
+  // await Token.deleteOne({ user: user.id });
+   await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_ACCESS });
   const otp = _.random(100000, 999999);
   const expires = moment().add(config.jwt.verifyOTPExpirationMinutes, 'minutes');
   await saveOTP(otp, user.id, expires, tokenTypes.VERIFY_ACCESS);
+  console.log(otp);
   return otp;
 };
 

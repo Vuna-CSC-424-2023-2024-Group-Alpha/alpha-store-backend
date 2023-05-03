@@ -8,7 +8,7 @@ const MAIL_FROM_CONSOLE = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FRO
 
 // Sends a welcome email to new users upon registration.
 //NOT USED
-const ExpressBoilerplateWelcome = async (payload) => {
+const PortalWelcome = async (payload) => {
   const { to, firstName, email } = payload;
 
   // const email = 'webmanager@haqqman.agency';
@@ -123,8 +123,8 @@ const recoverConsoleAccessRequest = async (payload) => {
 };
 
 module.exports = {
-  ExpressBoilerplateWelcome,
-NewPortaltalUserVerificationCode,
+  PortalWelcome,
+  NewPortaltalUserVerificationCode,
   PasswordResetSuccessful,
   VerifyPortalUserAccessWithOTP,
   VerifyConsoleUserAccessWithOTP,
