@@ -7,7 +7,6 @@ const MAIL_FROM_PORTAL = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM
 const MAIL_FROM_CONSOLE = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_CONSOLE}>`;
 
 // Sends a welcome email to new users upon registration.
-//NOT USED
 const PortalWelcome = async (payload) => {
   const { to, firstName, email } = payload;
 
@@ -24,7 +23,6 @@ const PortalWelcome = async (payload) => {
 };
 
 // Sends a verification code to new users for email verification.
-//NOT USED
 const NewPortaltalUserVerificationCode = async (payload) => {
   const { firstName, email, code } = payload;
 
@@ -41,7 +39,6 @@ const NewPortaltalUserVerificationCode = async (payload) => {
 };
 
 // Sends a notification email to users when their password is successfully reset.
-//NOT USED
 const PasswordResetSuccessful = async (payload) => {
   const { email, firstName } = payload;
 
@@ -106,7 +103,6 @@ const InviteConsoleUser = async (payload) => {
 };
 
 // Sends Email to console user to recover access
-//NOT USED
 const recoverConsoleAccessRequest = async (payload) => {
   const { to, firstName, lastName } = payload;
 

@@ -154,7 +154,6 @@ const hasOTPExpired = (otpDoc) => {
   return expiresIn >= config.jwt.verifyOTPExpirationMinutes;
 };
 
-
 // Method to generate  OTP
 /**
  * Generate verify access otp
@@ -164,13 +163,13 @@ const hasOTPExpired = (otpDoc) => {
 const generateUserAccessOTP = async (user) => {
   // delete previous otp to invalidate it
   // await Token.deleteOne({ user: user.id });
-   await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_ACCESS });
+  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_ACCESS });
   const otp = _.random(100000, 999999);
   const expires = moment().add(config.jwt.verifyOTPExpirationMinutes, 'minutes');
   await saveToken(otp, user.id, expires, tokenTypes.VERIFY_ACCESS);
   console.log(otp);
   return otp;
-}; 
+};
 
 /**
  * Verify OTP and return OTP doc (or throw an error if it is not valid)
