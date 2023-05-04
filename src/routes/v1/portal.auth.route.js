@@ -14,6 +14,7 @@ router.post('/reset-password', validate(portalAuthValidation.resetPassword), por
 router.put('/reset-password/:token', validate(portalAuthValidation.setNewPassword), portalAuthController.setNewPassword);
 router.post('/send-verification-email', auth(), portalAuthController.sendVerificationEmail);
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
+router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
 
 module.exports = router;
  
@@ -110,7 +111,7 @@ module.exports = router;
  *               type: object
  *               properties:
  *                 user:
- *                   $ref: '#/components/schemas/User'
+ *                   $ref: '#/components/schemas/PortalUser'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "401":
@@ -292,4 +293,49 @@ module.exports = router;
  *             example:
  *               code: 401
  *               message: verify email failed
+ */
+
+/**
+ * @swagger
+ * /portal/auth/verify-otp:
+ *   post:
+ *     summary: Verify OTP for Portal User
+ *     description: Verify the OTP sent to the portal user after successful login.
+ *     tags: [Portal Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - otp
+ *             properties:
+ *               otp:
+ *                 type: string
+ *             example:
+ *               otp: 392920
+ *     responses:
+ *       "204":
+ *         description: No content
+ *       "400":
+ *         description: OTP expired
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               code: 400
+ *               message: OTP expired!
+ *       "401":
+ *         description: Access verification with OTP failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               code: 401
+ *               message: Access verification with OTP failed
  */

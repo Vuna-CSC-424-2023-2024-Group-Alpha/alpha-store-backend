@@ -217,7 +217,7 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/Portal_User'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":

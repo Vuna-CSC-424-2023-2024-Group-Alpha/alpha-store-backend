@@ -19,6 +19,9 @@ const envVarsSchema = Joi.object()
     JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: Joi.number()
       .default(10)
       .description('minutes after which verify email token expires'),
+    JWT_VERIFY_OTP_EXPIRATION_MINUTES: Joi.number()
+      .default(10)
+      .description('minutes after which verify acess otp expires'),
     SMTP_HOST: Joi.string().description('server that will send the emails'),
     SMTP_PORT: Joi.number().description('port to connect to the email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),

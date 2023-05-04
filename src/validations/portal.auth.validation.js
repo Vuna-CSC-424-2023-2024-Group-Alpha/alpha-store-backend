@@ -49,6 +49,11 @@ const verifyEmail = {
     vCode: Joi.string().required(),
   }),
 };
+const verifyOTP = {
+  body: Joi.object().keys({
+    otp: Joi.string().min(6).max(6).required(),
+  }),
+};
 
 module.exports = {
   createAccount,
@@ -58,4 +63,5 @@ module.exports = {
   resetPassword,
   setNewPassword,
   verifyEmail,
+  verifyOTP,
 };

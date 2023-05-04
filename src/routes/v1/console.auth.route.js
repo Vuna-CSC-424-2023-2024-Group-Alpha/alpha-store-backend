@@ -10,45 +10,44 @@ router.post('/login', validate(consoleAuthValidation.login), consoleAuthControll
 router.post('/logout', validate(consoleAuthValidation.logout), consoleAuthController.logout);
 router.post('/reset-password', validate(consoleAuthValidation.resetPassword), consoleAuthController.resetPassword);
 router.put('/reset-password/:token', validate(consoleAuthValidation.setNewPassword), consoleAuthController.setNewPassword);
-router.post('/verify-otp', auth(), validate(consoleAuthValidation.verifyAccessOTP), consoleAuthController.verifyOTP);
+router.post('/verify-otp', auth(), validate(consoleAuthValidation.verifyOTP), consoleAuthController.verifyOTP);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *  name: Console Auth
- * description:  Authenticate the Console User
+ *   name: Console Auth
+ *   description: Console User Authentication
  */
 
 /**
  * @swagger
  * /console/auth/login:
- * post:
- * summary: Login Console User
- * description: Login the console user, on successful login, an OTP is sent the registered user's email attempting to login. The user will be verifie using the OTP to gain access to  console.
- * tags: [Console Auth]
- * requestBody:
- *           required:
- *                  true
- *              content:
- *                  application/json:
- *                    schema:
- *                          type: object
- *                          required:
- *                          - email
- *                          - password
+ *   post:
+ *     summary: Log in console user
+ *     description: Grants access to existing console user, and on successful confirmation of the workmail, an OTP is sent to the workmail to verify their access to the console.
+ *     tags: [Console Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
- *              email:
+ *               email:
  *                 type: string
  *                 format: email
  *               password:
  *                 type: string
- *                 format: P@ssw0rd!
- *               example:
- *               email: fake@example.com
+ *                 format: password
+ *             example:
+ *               email: workmail@example.com
  *               password: P@ssw0rd!
- *      responses:
+ *     responses:
  *       "200":
  *         description: OK
  *         content:
@@ -57,19 +56,19 @@ module.exports = router;
  *               type: object
  *               properties:
  *                 user:
- *                   $ref: '#/components/schemas/User'
+ *                   $ref: '#/components/schemas/ConsoleUser'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
- *          "401":
- *         description: Unauthorized
- *          content:
+ *       "401":
+ *         description: Invalid email or password
+ *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               code: 401
  *               message: Invalid email or password
- *        "400":
+ *       "400":
  *         description: Invalid email domain
  *         content:
  *           application/json:
@@ -83,23 +82,23 @@ module.exports = router;
 /**
  * @swagger
  * /console/auth/logout:
- * post:
- * summary: Logout
- *  tags: [Console Auth]
- *    requestBody:
- *        required: true
- *      content:
- *    application/json:
- *    schema:
+ *   post:
+ *     summary: Logout
+ *     tags: [Console Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
  *             type: object
  *             required:
  *               - refreshToken
  *             properties:
  *               refreshToken:
  *                 type: string
- *         example:
- *                refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.         m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
- *  responses:
+ *             example:
+ *               refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+ *     responses:
  *       "204":
  *         description: No content
  *       "404":
@@ -109,8 +108,8 @@ module.exports = router;
 /**
  * @swagger
  * /console/auth/reset-password:
- * post:
- *  summary: Reset password
+ *   post:
+ *     summary: Reset password
  *     description: An email will be sent to reset password.
  *     tags: [Console Auth]
  *     requestBody:
@@ -136,9 +135,9 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/auth/reset-password/(token):
- * put:
- *  summary: Reset password verify
+ * /console/auth/reset-password/{token}:
+ *   put:
+ *     summary: Verify new password
  *     tags: [Console Auth]
  *     parameters:
  *       - in: path
@@ -181,7 +180,7 @@ module.exports = router;
  * @swagger
  * /console/auth/verify-otp:
  *   post:
- *     summary: Verify OTP
+ *     summary: Verify OTP sent to the console user
  *     description: Verify the OTP sent to the console user after successful login.
  *     tags: [Console Auth]
  *     security:

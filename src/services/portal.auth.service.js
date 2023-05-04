@@ -91,10 +91,26 @@ const verifyEmail = async (verifyEmailCode, userId) => {
   }
 };
 
+
+ const verifyOTP = async (otp, userId) => {
+   try {
+     const otpDoc = await tokenService.verifyAccessOTP(otp, userId);
+     const user = await consoleUserService.getConsoleUserById(otpDoc.user);
+     if (!user) {
+       throw new ApiError(httpStatus.NOT_FOUND, 'OTP does not exist');
+     }
+     await Token.deleteMany({ userId: user.id, type: tokenTypes.VERIFY_OTP });
+   } catch (error) {
+     if (error instanceof ApiError) throw error;
+     throw new ApiError(httpStatus.UNAUTHORIZED, 'Access verification with OTP failed');
+   }
+ };
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
   setNewPassword,
   verifyEmail,
+  verifyOTP,
 };

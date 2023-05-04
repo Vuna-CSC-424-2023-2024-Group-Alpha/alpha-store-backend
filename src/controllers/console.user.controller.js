@@ -25,7 +25,9 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
   const { email, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
   await emailService.InviteConsoleUser({
-    // TODO: Implement InviteConsoleUser Email
+    firstName,
+    token,
+    to: email,
   });
 
   res.status(httpStatus.NO_CONTENT).send();

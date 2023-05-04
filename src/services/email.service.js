@@ -1,62 +1,126 @@
-const nodemailer = require('nodemailer');
-const config = require('../config/config');
-const logger = require('../config/logger');
+const postmark = require('postmark');
 
-const transport = nodemailer.createTransport(config.email.smtp);
-/* istanbul ignore next */
-if (config.env !== 'test') {
-  transport
-    .verify()
-    .then(() => logger.info('Connected to email server'))
-    .catch(() => logger.warn('Unable to connect to email server. Make sure you have configured the SMTP options in .env'));
-}
+// Configure postmark
+const client = new postmark.ServerClient(process.env.POSTMARK_SECRET);
+const MAIL_FROM_DEFAULT = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_DEFAULT}>`;
+const MAIL_FROM_PORTAL = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_PORTAL}>`;
+const MAIL_FROM_CONSOLE = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_CONSOLE}>`;
 
-/**
- * Send an email
- * @param {string} to
- * @param {string} subject
- * @param {string} text
- * @returns {Promise}
- */
-const sendEmail = async (to, subject, text) => {
-  const msg = { from: config.email.from, to, subject, text };
-  await transport.sendMail(msg);
+// Sends a welcome email to new users upon registration.
+const PortalWelcome = async (payload) => {
+  const { to, firstName, email } = payload;
+
+  // const email = 'webmanager@haqqman.agency';
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 25815659, // TODO: Replace with the right TemplateId for "ExpressBoilerplateWelcome"
+    TemplateModel: {
+      email,
+      firstName,
+    },
+  });
 };
 
-/**
- * Send reset password email
- * @param {string} to
- * @param {string} token
- * @returns {Promise}
- */
-const sendResetPasswordEmail = async (to, token) => {
-  const subject = 'Reset password';
-  // replace this url with the link to the reset password page of your front-end app
-  const resetPasswordUrl = `http://link-to-app/set-new-password?token=${token}`;
-  const text = `Dear user,
-To reset your password, click on this link: ${resetPasswordUrl}
-If you did not request any password resets, then ignore this email.`;
-  await sendEmail(to, subject, text);
+// Sends a verification code to new users for email verification.
+const NewPortaltalUserVerificationCode = async (payload) => {
+  const { firstName, email, code } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 25815659, // Postmark: Email Template for "NewUserVerificationCode"
+    TemplateModel: {
+      email,
+      firstName,
+      code,
+    },
+  });
 };
 
-/**
- * Send verification email
- * @param {string} to
- * @param {string} token
- * @returns {Promise}
- */
-const sendVerificationEmail = async (to, code) => {
-  const subject = 'Email Verification';
-  // replace this url with the link to the email verification page of your front-end app
-  const text = `Dear user,
-To verify your email, make use of this code: ${code}
-If you did not create an account, then ignore this email.`;
-  await sendEmail(to, subject, text);
+// Sends a notification email to users when their password is successfully reset.
+const PasswordResetSuccessful = async (payload) => {
+  const { email, firstName } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 25815659, // Postmark: Email Template for "PasswordResetSuccessful"
+    TemplateModel: {
+      email,
+      firstName,
+    },
+  });
+};
+
+// Sends an OTP to grant access to an existing portal user.
+const VerifyPortalUserAccessWithOTP = async (payload) => {
+  const { to, firstName, otp } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 25815659,
+    TemplateModel: {
+      to,
+      firstName,
+      otp,
+    },
+  });
+};
+
+// Sends an OTP to grant access to an existing console user.
+const VerifyConsoleUserAccessWithOTP = async (payload) => {
+  const { to, firstName, otp } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_CONSOLE,
+    To: to,
+    TemplateId: 25815659, // TODO: Replace with the right TemplateId for "VerifyConsoleUserAccessWithOTP"
+    TemplateModel: {
+      to,
+      firstName,
+      otp,
+    },
+  });
+};
+
+// Sends email inviting a console user to join a team
+const InviteConsoleUser = async (payload) => {
+  const { to, firstName, token } = payload;
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_CONSOLE,
+    To: to,
+    TemplateId: 31422776, //TODO: Replace with the right TemplateId for "InviteConsoleUser"
+    TemplateModel: {
+      firstName,
+      token,
+    },
+  });
+};
+
+// Sends Email to console user to recover access
+const recoverConsoleAccessRequest = async (payload) => {
+  const { to, firstName, lastName } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_DEFAULT,
+    To: to,
+    TemplateId: 25815659, //TODO: Replace with the right TemplateId for "recoverConsoleAccessRequest"
+    TemplateModel: {
+      to,
+      firstName,
+      lastName,
+    },
+  });
 };
 
 module.exports = {
-  transport,
-  sendEmail,
-  sendResetPasswordEmail,
-  sendVerificationEmail,
+  PortalWelcome,
+  NewPortaltalUserVerificationCode,
+  PasswordResetSuccessful,
+  VerifyPortalUserAccessWithOTP,
+  VerifyConsoleUserAccessWithOTP,
+  InviteConsoleUser,
+  recoverConsoleAccessRequest,
 };
