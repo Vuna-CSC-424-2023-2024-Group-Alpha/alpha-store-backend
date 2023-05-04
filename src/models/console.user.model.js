@@ -125,6 +125,6 @@ consoleUserSchema.pre('save', async function (next) {
 /**
  * @typedef User
  */
-const ConsoleUser = mongoose.model('ConsoleUser', consoleUserSchema);
+const ConsoleUser = mongoose.model('Console_User', consoleUserSchema);
 
 module.exports = ConsoleUser;
