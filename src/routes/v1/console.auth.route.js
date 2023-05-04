@@ -10,7 +10,7 @@ router.post('/login', validate(consoleAuthValidation.login), consoleAuthControll
 router.post('/logout', validate(consoleAuthValidation.logout), consoleAuthController.logout);
 router.post('/reset-password', validate(consoleAuthValidation.resetPassword), consoleAuthController.resetPassword);
 router.put('/reset-password/:token', validate(consoleAuthValidation.setNewPassword), consoleAuthController.setNewPassword);
-router.post('/verify-otp', auth(), validate(consoleAuthValidation.verifyAccessOTP), consoleAuthController.verifyOTP);
+router.post('/verify-otp', auth(), validate(consoleAuthValidation.verifyOTP), consoleAuthController.verifyOTP);
 
 module.exports = router;
 

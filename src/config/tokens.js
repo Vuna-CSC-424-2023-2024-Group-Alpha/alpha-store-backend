@@ -3,7 +3,7 @@ const tokenTypes = {
   REFRESH: 'refresh',
   RESET_PASSWORD: 'resetPassword',
   VERIFY_EMAIL: 'verifyEmail',
-  VERIFY_ACCESS: 'verifyAccess',
+  VERIFY_OTP: 'verifyOTP',
   INVITE_CONSOLE_USER: 'inviteConsoleUser',
 };
 

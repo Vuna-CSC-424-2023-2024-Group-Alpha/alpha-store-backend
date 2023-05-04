@@ -162,12 +162,11 @@ const hasOTPExpired = (otpDoc) => {
  */
 const generateUserAccessOTP = async (user) => {
   // delete previous otp to invalidate it
-  // await Token.deleteOne({ user: user.id });
-  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_ACCESS });
+  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_OTP });
   const otp = _.random(100000, 999999);
   const expires = moment().add(config.jwt.verifyOTPExpirationMinutes, 'minutes');
-  await saveToken(otp, user.id, expires, tokenTypes.VERIFY_ACCESS);
-  console.log(otp);
+  await saveToken(otp, user.id, expires, tokenTypes.VERIFY_OTP);
+  console.log(otp)
   return otp;
 };
 
@@ -178,7 +177,7 @@ const generateUserAccessOTP = async (user) => {
  * @returns {Promise<Token>}
  */
 const verifyAccessOTP = async (userOTP, userId) => {
-  const otpDoc = await Token.findOne({ otp: userOTP, type: tokenTypes.VERIFY_ACCESS, user: userId, blacklisted: false });
+  const otpDoc = await Token.findOne({ otp: userOTP, type: tokenTypes.VERIFY_OTP, user: userId, blacklisted: false });
   if (!otpDoc) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OTP not found');
   }
