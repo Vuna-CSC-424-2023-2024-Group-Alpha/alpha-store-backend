@@ -55,6 +55,11 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const verifyOTP = catchAsync(async (req, res) => {
+  await portalAuthService.verifyOTP(req.body.otp, req.user.id);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 module.exports = {
   createAccount,
   login,
@@ -64,4 +69,5 @@ module.exports = {
   setNewPassword,
   sendVerificationEmail,
   verifyEmail,
+  verifyOTP,
 };

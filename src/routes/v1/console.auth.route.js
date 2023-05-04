@@ -180,7 +180,7 @@ module.exports = router;
  * @swagger
  * /console/auth/verify-otp:
  *   post:
- *     summary: Verify OTP
+ *     summary: Verify OTP sent to the console user
  *     description: Verify the OTP sent to the console user after successful login.
  *     tags: [Console Auth]
  *     security:
