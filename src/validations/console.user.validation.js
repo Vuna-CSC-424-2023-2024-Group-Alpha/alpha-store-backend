@@ -17,7 +17,7 @@ const createConsoleUser = {
   }),
 };
 
-const getTeamMembers = {
+const getConsoleUser = {
   params: Joi.object().keys({
     consoleUserId: Joi.string().custom(objectId),
   }),
