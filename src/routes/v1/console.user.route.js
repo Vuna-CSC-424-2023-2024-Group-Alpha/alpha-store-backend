@@ -6,19 +6,37 @@ const consoleUserController = require('../../controllers/console.user.controller
 
 const router = express.Router();
 
-router.get('/:consoleUserId', auth('getUsers'), consoleUserController.getConsoleUser);
+// 
+router.get('/', auth('getUsers'), consoleUserController.getConsoleUsers);
+
+
+router.get(
+  '/:consoleUserId',
+  auth('getUsers'),
+  validate(consoleUserValidation.getConsoleUser),
+  consoleUserController.getConsoleUser
+);
+
 router.patch(
   '/:consoleUserId',
   auth('manageUsers'),
   validate(consoleUserValidation.updateConsoleUser),
   consoleUserController.updateConsoleUser
 );
+
+router.patch(
+  '/update-status/:consoleUserId',
+  validate(consoleUserValidation.updateConsoleUserStatus),
+  consoleUserController.updateConsoleUserStatus
+);
+
 router.post(
   '/invite',
   auth('inviteConsoleUser'),
   validate(consoleUserValidation.inviteConsoleUser),
   consoleUserController.inviteConsoleUser
 );
+
 router.post('/accept-invite/:token', validate(consoleUserValidation.acceptInvite), consoleUserController.acceptInvite);
 
 module.exports = router;
@@ -27,15 +45,15 @@ module.exports = router;
  * @swagger
  * tags:
  *   name: Console Teams
- *   description: Console User Team for management
+ *   description: Console User Team for Management
  */
 
 /**
  * @swagger
- * /console/teams:
+ * /console/team:
  *   get:
  *     summary: Get all console users
- *     description: Retrieves all console users that make a team
+ *     description: Retrieves all console users that make up a team
  *     tags: [Console Teams]
  *     security:
  *       - bearerAuth: []
@@ -59,11 +77,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/teams/{consoleUserId}:
+ * /console/team/{consoleUserId}:
  *   get:
  *     summary: Get a Console user
- *     description: Retrieve a Console User account with the provided {consoleUserId}.
- *     tags: [Console Teams]
+ *     description: Retrieve a Console User  with the provided {consoleUserId}.
+ *     tags: [Console Team]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -125,7 +143,7 @@ module.exports = router;
  *               phoneNumber:
  *                 type: string
  *             example:
- *               email: fake@example.com
+ *               workmail: workmail@example.com
  *               firstName: John
  *               lastName: Doe
  *               role: administrator
@@ -151,7 +169,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/teams/update-status/{consoleUserId}:
+ * /console/team/update-status/{consoleUserId}:
  *   patch:
  *     summary: Update a Console user status
  *     description: Update status of the console user account of the provided {consoleUserId}.
@@ -192,7 +210,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/teams/invite:
+ * /console/team/invite:
  *   post:
  *     summary: Invite a new team member (Console user)
  *     description: Invite a new team member (Console user) to the console, the user to be invited receives an email with link to complete the invite.
@@ -218,7 +236,7 @@ module.exports = router;
  *                 type: string
  *                 enum: ['administrator','manager','operations','support','webmanager']
  *             example:
- *               email: fake@example.com
+ *               workmail: workmail@example.com
  *               firstName: John
  *               lastName: Doe
  *               role: administrator
@@ -235,7 +253,7 @@ module.exports = router;
  * @swagger
  * /console/teams/accept-invite/{token}:
  *   post:
- *     summary: Accept invite of a new team member (Console user)
+ *     summary: Accept invite of a new team member, who is a Console user
  *     description: Accept invite of a new team member (Console user) to the console, this completes the invitation of a new console user.
  *     tags: [Console Teams]
  *     security:
