@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const brandSchema = new mongoose.Schema(
+const brandingSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -63,7 +63,7 @@ const brandSchema = new mongoose.Schema(
 
     images: [{ type: String }],
 
-    branding: {
+    brandingSettings: {
       logo: { type: String },
       logoLight: { type: String },
       logoCompact: { type: String },
@@ -76,6 +76,6 @@ const brandSchema = new mongoose.Schema(
   }
 );
 
-const Brand = mongoose.model('Brand', brandSchema);
+const Branding = mongoose.model('Branding', brandingSchema);
 
-module.exports = Brand;
+module.exports = Branding;

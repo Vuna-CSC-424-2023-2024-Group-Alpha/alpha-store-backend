@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { consoleUserService, emailService, tokenService, hostelService } = require('../services');
+const { consoleUserService, emailService, tokenService, brandingService } = require('../services');
 
 const getConsoleUsers = catchAsync(async (req, res) => {
   const consoleUsers = await consoleUserService.getConsoleUsers();
@@ -36,15 +36,15 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
   const { email, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
   // get active hostel from currently logged in user
-  const activeBrand = await brandService.getBrandById(req.user.activeBrand);
+  const activeBranding = await brandingService.getBrandById(req.user.activeBranding);
   await emailService.InviteConsoleUser({
     token,
     firstName,
     to: email,
-    brandName: activeBrand.name,
-    consoleUrl: activeBrand.consoleUrl,
-    portalUrl: activeBrand.portalUrl,
-    logoEmail: activeBrand.branding.logoEmail,
+    brandName: activeBranding.name,
+    consoleUrl: activeBranding.consoleUrl,
+    portalUrl: activeBranding.portalUrl,
+    logoEmail: activeBranding.brandingSettings.logoEmail,
   });
 
   res.status(httpStatus.NO_CONTENT).send();

@@ -82,9 +82,9 @@ const consoleUserSchema = mongoose.Schema(
       type: String,
     },
 
-    activeBrand: {
+    activeBranding: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'Brand',
+      ref: 'Branding',
     },
   },
   {

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const config = require('../config/config');
 const logger = require('../config/logger');
 const seedConsoleUsers = require('./console.users');
+const seedBrandings = require('./brandings');
 
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');
@@ -19,6 +20,7 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
 const seed = async () => {
   try {
     await seedConsoleUsers();
+    await seedBrandings();
     logger.info('seeding completed successfully');
   } catch (err) {
     logger.error(err);

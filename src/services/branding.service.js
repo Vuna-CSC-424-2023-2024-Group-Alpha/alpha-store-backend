@@ -1,5 +1,5 @@
 //
-const { Brand } = require('../models');
+const { Branding } = require('../models');
 
 const createBrand = async (req) => {
   let images;
@@ -9,25 +9,25 @@ const createBrand = async (req) => {
   }
 
   try {
-    const brand = await Brand.create({
+    const branding = await Branding.create({
       ...req.body,
       images,
     });
 
-    return brand;
+    return branding;
   } catch (error) {
     console.log(error);
   }
 };
 
 const getBrands = async () => {
-  const brands = await Brand.find();
-  return brands;
+  const brandings = await Branding.find();
+  return brandings;
 };
 
 const getBrandById = async (id) => {
-  const brand = await Brand.findOne({ _id: id });
-  return brand;
+  const branding = await Branding.findOne({ _id: id });
+  return branding;
 };
 
 module.exports = {
