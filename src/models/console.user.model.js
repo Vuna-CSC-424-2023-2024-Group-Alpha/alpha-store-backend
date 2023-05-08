@@ -81,6 +81,11 @@ const consoleUserSchema = mongoose.Schema(
     location: {
       type: String,
     },
+
+    activeBrand: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Brand',
+    },
   },
   {
     timestamps: true,

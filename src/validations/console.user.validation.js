@@ -40,9 +40,12 @@ const updateConsoleUser = {
     .min(1),
 };
 
-const deleteConsoleUser = {
+const updateConsoleUserStatus = {
   params: Joi.object().keys({
-    userId: Joi.string().custom(objectId),
+    consoleUserId: Joi.string().custom(objectId),
+  }),
+  body: Joi.object().keys({
+    status: Joi.string().valid('active', 'inactive'),
   }),
 };
 
@@ -68,8 +71,8 @@ const acceptInvite = {
 module.exports = {
   createConsoleUser,
   updateConsoleUser,
-  deleteConsoleUser,
-  getTeamMembers,
+  updateConsoleUserStatus,
+  getConsoleUser,
   inviteConsoleUser,
   acceptInvite,
 };
