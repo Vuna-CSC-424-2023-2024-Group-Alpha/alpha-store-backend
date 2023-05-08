@@ -50,7 +50,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/team:
+ * /console/teams:
  *   get:
  *     summary: Get all console users
  *     description: Retrieves all console users that make up a team
@@ -77,7 +77,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/team/{consoleUserId}:
+ * /console/teams/{consoleUserId}:
  *   get:
  *     summary: Get a Console user
  *     description: Retrieve a Console User  with the provided {consoleUserId}.
@@ -169,7 +169,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/team/update-status/{consoleUserId}:
+ * /console/teams/update-status/{consoleUserId}:
  *   patch:
  *     summary: Update a Console user status
  *     description: Update status of the console user account of the provided {consoleUserId}.
@@ -210,7 +210,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /console/team/invite:
+ * /console/teams/invite:
  *   post:
  *     summary: Invite a new team member (Console user)
  *     description: Invite a new team member (Console user) to the console, the user to be invited receives an email with link to complete the invite.
