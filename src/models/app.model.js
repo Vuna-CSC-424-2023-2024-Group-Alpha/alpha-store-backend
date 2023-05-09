@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
-const brandingSchema = new mongoose.Schema(
+// App schema is a placeholder for any plateform being built
+// fields can be added or removed base on requirement.
+
+const appSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -54,6 +57,10 @@ const brandingSchema = new mongoose.Schema(
       type: Number,
     },
 
+    capacity: {
+      type: Number,
+    },
+
     portalUrl: {
       type: String,
     },
@@ -63,7 +70,7 @@ const brandingSchema = new mongoose.Schema(
 
     images: [{ type: String }],
 
-    brandingSettings: {
+    branding: {
       logo: { type: String },
       logoLight: { type: String },
       logoCompact: { type: String },
@@ -76,6 +83,6 @@ const brandingSchema = new mongoose.Schema(
   }
 );
 
-const Branding = mongoose.model('Branding', brandingSchema);
+const App = mongoose.model('App', brandingSchema);
 
-module.exports = Branding;
+module.exports = App;
