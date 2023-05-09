@@ -40,7 +40,7 @@ const NewPortaltalUserVerificationCode = async (payload) => {
 
 // Sends a notification email to users when their password is successfully reset.
 const PasswordResetSuccessful = async (payload) => {
-  const { email, firstName } = payload;
+  const { email, firstName, logoEmail, portalUrl } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_PORTAL,
@@ -49,6 +49,8 @@ const PasswordResetSuccessful = async (payload) => {
     TemplateModel: {
       email,
       firstName,
+      logoEmail,
+      portalUrl,
     },
   });
 };
@@ -71,7 +73,7 @@ const VerifyPortalUserAccessWithOTP = async (payload) => {
 
 // Sends an OTP to grant access to an existing console user.
 const VerifyConsoleUserAccessWithOTP = async (payload) => {
-  const { to, firstName, otp } = payload;
+  const { to, firstName, ot, appName, logoEmail, portalUrl, consoleUrl } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_CONSOLE,
@@ -81,13 +83,17 @@ const VerifyConsoleUserAccessWithOTP = async (payload) => {
       to,
       firstName,
       otp,
+      appName,
+      logoEmail,
+      portalUrl,
+      consoleUrl,
     },
   });
 };
 
 // Sends email inviting a console user to join a team
 const InviteConsoleUser = async (payload) => {
-  const { to, firstName, token, brandName, consoleUrl, portalUrl, logoEmail } = payload;
+  const { to, firstName, token, appName, consoleUrl, portalUrl, logoEmail } = payload;
   client.sendEmailWithTemplate({
     From: MAIL_FROM_CONSOLE,
     To: to,
@@ -95,7 +101,7 @@ const InviteConsoleUser = async (payload) => {
     TemplateModel: {
       firstName,
       token,
-      brandName,
+      appName,
       consoleUrl,
       portalUrl,
       logoEmail,

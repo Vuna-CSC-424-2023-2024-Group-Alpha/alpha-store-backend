@@ -20,7 +20,7 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
 const seed = async () => {
   try {
     await seedConsoleUsers();
-    await seedBrandings();
+    await seedApps();
     logger.info('seeding completed successfully');
   } catch (err) {
     logger.error(err);

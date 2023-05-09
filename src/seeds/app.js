@@ -4,10 +4,10 @@ const logger = require('../config/logger');
 
 const apps = [
   {
-    name: 'Example1 Brand',
+    name: 'Example1 App',
     appId: '123456',
     address: 'Abuja, Nigeria',
-    contactPerson: 'Brand1 Contact',
+    contactPerson: 'App1 Contact',
     phoneNumber: '0800 000 0000',
     email: 'sandbox@haqqman.agency',
     description: 'This description is just a placeholder',
@@ -19,10 +19,10 @@ const apps = [
   },
 
   {
-    name: 'Example2 Brand',
+    name: 'Example2 App',
     appId: '123457',
     address: 'Lagos, Nigeria',
-    contactPerson: 'Brand2 Contact',
+    contactPerson: 'App2 Contact',
     phoneNumber: '0800 000 0000',
     email: 'sandbox@haqqman.agency',
     description: 'This description is just a placeholder',

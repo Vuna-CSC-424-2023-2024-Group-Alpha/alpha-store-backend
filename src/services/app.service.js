@@ -1,5 +1,5 @@
 //
-const { App } = require('../routes');
+const { App } = require('../models');
 
 // app.service is a placeholder for any plateform being built
 // names can be  modified base on requirement.
