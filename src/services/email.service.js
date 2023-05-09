@@ -87,7 +87,7 @@ const VerifyConsoleUserAccessWithOTP = async (payload) => {
 
 // Sends email inviting a console user to join a team
 const InviteConsoleUser = async (payload) => {
-  const { to, firstName, token } = payload;
+  const { to, firstName, token, brandName, consoleUrl, portalUrl, logoEmail } = payload;
   client.sendEmailWithTemplate({
     From: MAIL_FROM_CONSOLE,
     To: to,
@@ -95,6 +95,10 @@ const InviteConsoleUser = async (payload) => {
     TemplateModel: {
       firstName,
       token,
+      brandName,
+      consoleUrl,
+      portalUrl,
+      logoEmail,
     },
   });
 };
