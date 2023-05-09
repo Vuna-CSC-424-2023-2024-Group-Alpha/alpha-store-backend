@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 
-const { portalAuthService, portalUserService, tokenService, emailService } = require('../services');
+const { portalAuthService, portalUserService, tokenService, emailService, appService } = require('../services');
 
 const createAccount = catchAsync(async (req, res) => {
   const user = await portalUserService.createPortalUser(req.body);
@@ -15,10 +15,13 @@ const login = catchAsync(async (req, res) => {
   const tokens = await tokenService.generateAuthTokens(user);
   // send user OTP
   const accessOTP = await tokenService.generateUserAccessOTP(user);
+  const activeApp = await appService.getAppById(user.App)
   await emailService.VerifyPortalUserAccessWithOTP({
     to: user.email,
     firstName: user.firstName,
     otp: accessOTP,
+    logoEmail: activeApp.branding.logoEmail,
+    portalUrl: activeApp.portalUrl,
   });
   res.send({ user, tokens });
 });

@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { consoleUserService, emailService, tokenService, brandingService } = require('../services');
+const { consoleUserService, emailService, tokenService, appService } = require('../services');
 
 const getConsoleUsers = catchAsync(async (req, res) => {
   const consoleUsers = await consoleUserService.getConsoleUsers();
@@ -17,7 +17,7 @@ const getConsoleUser = catchAsync(async (req, res) => {
 });
 
 const updateConsoleUser = catchAsync(async (req, res) => {
- await consoleUserService.updateConsoleUser(req.params.consoleUserId, req.body);
+  await consoleUserService.updateConsoleUser(req.params.consoleUserId, req.body);
   res.send(user);
 });
 
@@ -36,15 +36,15 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
   const { email, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
   // get active hostel from currently logged in user
-  const activeBranding = await brandingService.getBrandingById(req.user.activeBranding);
+  const activeApp = await appService.getAppById(req.user.activeApp);
   await emailService.InviteConsoleUser({
     token,
     firstName,
     to: email,
-    brandName: activeBranding.name,
-    consoleUrl: activeBranding.consoleUrl,
-    portalUrl: activeBranding.portalUrl,
-    logoEmail: activeBranding.brandingSettings.logoEmail,
+    appName: activeApp.name,
+    consoleUrl: activeApp.consoleUrl,
+    portalUrl: activeApp.portalUrl,
+    logoEmail: activeApp.branding.logoEmail,
   });
 
   res.status(httpStatus.NO_CONTENT).send();
