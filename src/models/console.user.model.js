@@ -81,6 +81,11 @@ const consoleUserSchema = mongoose.Schema(
     location: {
       type: String,
     },
+
+    activeApp: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'App',
+    },
   },
   {
     timestamps: true,

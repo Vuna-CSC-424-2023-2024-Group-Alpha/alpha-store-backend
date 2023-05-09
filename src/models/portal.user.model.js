@@ -49,6 +49,10 @@ const portalUserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    app: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'App',
+    },
   },
   {
     timestamps: true,

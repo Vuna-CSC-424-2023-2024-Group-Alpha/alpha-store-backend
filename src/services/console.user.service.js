@@ -33,7 +33,7 @@ const getConsoleUsers = async () => {
  * @param {ObjectId} id
  * @returns {Promise<ConsoleUser>}
  */
-const getConsoleUserById = async (id) => {
+const getConsoleUser = async (id) => {
   return ConsoleUser.findById(id);
 };
 
@@ -52,8 +52,8 @@ const getConsoleUserByEmail = async (email) => {
  * @param {Object} updateBody
  * @returns  {Promise<ConsoleUser>}
  */
-const updateConsoleUserById = async (userId, updateBody) => {
-  const consoleUser = await getConsoleUserById(userId);
+const updateConsoleUser = async (userId, updateBody) => {
+  const consoleUser = await getConsoleUser(userId);
   if (!consoleUser) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Console User not found');
   }
@@ -75,47 +75,11 @@ const updateConsoleUserStatus = async (consoleUserId, status) => {
   await ConsoleUser.updateOne({ _id: consoleUserId }, { status });
 };
 
-/**
- * Delete console user by id
- * @param {ObjectId} userId
- * @returns {Promise<ConsoleUser>}
- */
-const deleteConsoleUserById = async (userId) => {
-  const consoleUser = await getConsoleUserById(userId);
-  if (!consoleUser) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Console User not found!');
-  }
-  await consoleUser.remove();
-  return consoleUser;
-};
-
-/**
- * Update console user notificationOptions by id
- * @param {ObjectId} userId
- * @param {Object} updateBody
- * @returns {Promise<ConsoleUser>}
- */
-const updateConsoleUserNotificationById = async (userId, updateBody) => {
-  const consoleUser = await getConsoleUserById(userId);
-  if (!consoleUser) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Console User not found!');
-  }
-
-  const updatednotificationOptions = consoleUser.notificationOptions;
-  Object.assign(updatednotificationOptions, updateBody);
-  consoleUser.notificationOptions = updatednotificationOptions;
-
-  await consoleUser.save();
-  return consoleUser;
-};
-
 module.exports = {
   createConsoleUser,
   getConsoleUsers,
-  getConsoleUserById,
+  getConsoleUser,
   getConsoleUserByEmail,
-  updateConsoleUserById,
+  updateConsoleUser,
   updateConsoleUserStatus,
-  updateConsoleUserNotificationById,
-  deleteConsoleUserById,
 };

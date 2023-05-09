@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { consoleUserService, emailService, tokenService, hostelService } = require('../services');
+const { consoleUserService, emailService, tokenService, appService } = require('../services');
 
 const getConsoleUsers = catchAsync(async (req, res) => {
   const consoleUsers = await consoleUserService.getConsoleUsers();
@@ -9,7 +9,7 @@ const getConsoleUsers = catchAsync(async (req, res) => {
 });
 
 const getConsoleUser = catchAsync(async (req, res) => {
-  const user = await consoleUserService.getConsoleUserById(req.params.consoleUserId);
+  const user = await consoleUserService.getConsoleUser(req.params.consoleUserId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Console User not found');
   }
@@ -17,7 +17,7 @@ const getConsoleUser = catchAsync(async (req, res) => {
 });
 
 const updateConsoleUser = catchAsync(async (req, res) => {
-  await consoleUserService.updateConsoleUserById(req.params.consoleUserId, req.body);
+  await consoleUserService.updateConsoleUser(req.params.consoleUserId, req.body);
   res.send(user);
 });
 
@@ -36,15 +36,15 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
   const { email, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
   // get active hostel from currently logged in user
-  const activeHostel = await hostelService.getHostelById(req.user.activeHostel);
+  const activeApp = await appService.getAppById(req.user.activeApp);
   await emailService.InviteConsoleUser({
     token,
     firstName,
     to: email,
-    hostelName: activeHostel.name,
-    consoleUrl: activeHostel.consoleUrl,
-    portalUrl: activeHostel.portalUrl,
-    logoEmail: activeHostel.branding.logoEmail,
+    appName: activeApp.name,
+    consoleUrl: activeApp.consoleUrl,
+    portalUrl: activeApp.portalUrl,
+    logoEmail: activeApp.branding.logoEmail,
   });
 
   res.status(httpStatus.NO_CONTENT).send();
