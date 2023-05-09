@@ -23,7 +23,7 @@ const createApp = async (req) => {
   }
 };
 
-const getApp = async () => {
+const getApps = async () => {
   const apps = await App.find();
   return apps;
 };
@@ -35,6 +35,6 @@ const getAppById = async (id) => {
 
 module.exports = {
   createApp,
-  getApp,
+  getApps,
   getAppById,
 };
