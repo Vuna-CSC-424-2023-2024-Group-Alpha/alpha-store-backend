@@ -25,7 +25,7 @@ const getBrands = async () => {
   return brandings;
 };
 
-const getBrandById = async (id) => {
+const getBrandingById = async (id) => {
   const branding = await Branding.findOne({ _id: id });
   return branding;
 };
@@ -33,5 +33,5 @@ const getBrandById = async (id) => {
 module.exports = {
   createBrand,
   getBrands,
-  getBrandById,
+  getBrandingById,
 };

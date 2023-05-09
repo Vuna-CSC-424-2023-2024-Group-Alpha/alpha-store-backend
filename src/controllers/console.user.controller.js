@@ -36,7 +36,7 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
   const { email, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
   // get active hostel from currently logged in user
-  const activeBranding = await brandingService.getBrandById(req.user.activeBranding);
+  const activeBranding = await brandingService.getBrandingById(req.user.activeBranding);
   await emailService.InviteConsoleUser({
     token,
     firstName,
