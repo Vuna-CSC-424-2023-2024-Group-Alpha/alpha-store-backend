@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // App schema is a placeholder for any plateform being built
-// fields can be added or removed base on requirement.
+// fields can be added or removed based on requirement.
 
 const appSchema = new mongoose.Schema(
   {
@@ -59,6 +59,7 @@ const appSchema = new mongoose.Schema(
     portalUrl: {
       type: String,
     },
+
     consoleUrl: {
       type: String,
     },
@@ -68,8 +69,8 @@ const appSchema = new mongoose.Schema(
     branding: {
       logo: { type: String },
       logoLight: { type: String },
-      logoCompact: { type: String },
-      logoCompactLight: { type: String },
+      logomark: { type: String },
+      logomarkLight: { type: String },
       logoEmail: { type: String },
     },
   },
