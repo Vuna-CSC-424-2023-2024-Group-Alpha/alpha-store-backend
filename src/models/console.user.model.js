@@ -98,13 +98,13 @@ consoleUserSchema.plugin(paginate);
 
 /**
  * Check if workmail is taken
- * @param {string} email - The console user's email
+ * @param {string} workmail - The console user's workmail
  * @param {import('mongoose').ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns { Promise<boolean>}
  */
 
-consoleUserSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  const consoleUser = await this.findOne({ email, _id: { $ne: excludeUserId } });
+consoleUserSchema.statics.isWorkmailTaken = async function (workmail, excludeUserId) {
+  const consoleUser = await this.findOne({ workmail, _id: { $ne: excludeUserId } });
   return !!consoleUser;
 };
 

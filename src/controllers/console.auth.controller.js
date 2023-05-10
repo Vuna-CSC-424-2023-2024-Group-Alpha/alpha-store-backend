@@ -5,7 +5,7 @@ const { consoleAuthService, authService, tokenService, emailService, appService 
 
 const login = catchAsync(async (req, res) => {
   const { workmail, password } = req.body;
-  const user = await consoleAuthService.loginConsoleUserWithEmailAndPassword(email, password);
+  const user = await consoleAuthService.loginConsoleUserWithWorkmailAndPassword(workmail, password);
   const tokens = await tokenService.generateAuthTokens(user);
   const otp = await tokenService.generateUserAccessOTP(user);
   const activeApp = await appService.getApp(user.activeApp)

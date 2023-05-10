@@ -9,7 +9,7 @@ const getNextConsoleUserId = require('../utils/generateConsoleUserId');
  * @returns {Promise<ConsoleUser>}
  */
 const createConsoleUser = async (body) => {
-  if (await ConsoleUser.isEmailTaken(body.email)) {
+  if (await ConsoleUser.isEmailTaken(body.workmail)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The workmail entered already exists!');
   }
 
@@ -38,12 +38,12 @@ const getConsoleUser = async (id) => {
 };
 
 /**
- * Get console user by Email
- * @param {string} email
+ * Get console user by workmail
+ * @param {string} workmail
  * @returns {Promise<ConsoleUser>}
  */
-const getConsoleUserByEmail = async (email) => {
-  return ConsoleUser.findOne({ email });
+const getConsoleUserByWorkmail = async (workmail) => {
+  return ConsoleUser.findOne({ workmail });
 };
 
 /**
@@ -57,7 +57,7 @@ const updateConsoleUser = async (userId, updateBody) => {
   if (!consoleUser) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Console User not found');
   }
-  if (updateBody.email && (await ConsoleUser.isEmailTaken(updateBody.email, userId))) {
+  if (updateBody.workmail && (await ConsoleUser.isWorkmailTaken(updateBody.workmail, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Workmail already taken');
   }
   Object.assign(consoleUser, updateBody);
@@ -79,7 +79,7 @@ module.exports = {
   createConsoleUser,
   getConsoleUsers,
   getConsoleUser,
-  getConsoleUserByEmail,
+  getConsoleUserByWorkmail,
   updateConsoleUser,
   updateConsoleUserStatus,
 };

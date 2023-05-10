@@ -7,7 +7,7 @@ const consoleUsers = [
     consoleUserId: '467835001',
     firstName: 'Haqq',
     lastName: 'Manager',
-    email: 'webmanager@haqqman.agency',
+    workmail: 'webmanager@haqqman.agency',
     password: 'P@ssw0rd!',
     role: 'admin',
     dateOfBirth: '11-13-1980', // format: MM-DD-YYYY
@@ -19,7 +19,7 @@ const consoleUsers = [
     consoleUserId: '467835002',
     firstName: 'Sand',
     lastName: 'Box',
-    email: 'sandbox@haqqman.agency',
+    workmail: 'sandbox@haqqman.agency',
     password: 'c@@lPassw0rd',
     role: 'admin',
     dateOfBirth: '11-13-1980', // format: MM-DD-YYYY

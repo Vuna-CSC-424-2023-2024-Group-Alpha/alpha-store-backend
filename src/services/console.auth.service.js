@@ -13,7 +13,7 @@ const blockedDomains = require('../config/blocked.email.domains');
  * @param {string} password
  * @returns {Promise<ConsoleUser>}
  */
-const loginConsoleUserWithEmailAndPassword = async (email, password) => {
+const loginConsoleUserWithWorkmailAndPassword = async (workmail, password) => {
   if (hasBlockedDomain(email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid workmail domain');
   }
@@ -96,7 +96,7 @@ const hasBlockedDomain = (email) => {
 };
 
 module.exports = {
-  loginConsoleUserWithEmailAndPassword,
+  loginConsoleUserWithWorkmailAndPassword,
   setNewPassword,
   refreshAuth,
   verifyOTP,
