@@ -33,14 +33,14 @@ const inviteConsoleUser = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The workmail provided already exists!');
   }
 
-  const { email, firstName } = req.body;
+  const { workmail, firstName } = req.body;
   const token = await tokenService.generateInviteConsoleUserToken(req.body);
   // get active hostel from currently logged in user
-  const activeApp = await appService.getAppById(req.user.activeApp);
+  const activeApp = await appService.getApp(req.user.activeApp);
   await emailService.InviteConsoleUser({
     token,
     firstName,
-    to: email,
+    to: workmail,
     appName: activeApp.name,
     consoleUrl: activeApp.consoleUrl,
     portalUrl: activeApp.portalUrl,

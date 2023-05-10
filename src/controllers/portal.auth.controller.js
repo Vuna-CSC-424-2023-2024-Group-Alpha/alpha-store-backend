@@ -15,7 +15,7 @@ const login = catchAsync(async (req, res) => {
   const tokens = await tokenService.generateAuthTokens(user);
   // send user OTP
   const accessOTP = await tokenService.generateUserAccessOTP(user);
-  const activeApp = await appService.getAppById(user.App)
+  const activeApp = await appService.getApp(user.App)
   await emailService.VerifyPortalUserAccessWithOTP({
     to: user.email,
     firstName: user.firstName,

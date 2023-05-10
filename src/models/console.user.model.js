@@ -26,7 +26,7 @@ const consoleUserSchema = mongoose.Schema(
       trim: true,
     },
 
-    email: {
+    workmail: {
       type: String,
       require: true,
       unique: true,
@@ -34,7 +34,7 @@ const consoleUserSchema = mongoose.Schema(
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new Error('Invalid email');
+          throw new Error('Invalid workmail');
         }
       },
     },

@@ -46,6 +46,25 @@ const setNewPassword = async (resetPasswordToken, newPassword) => {
 };
 
 /**
+ * Refresh auth tokens
+ * @param {string} refreshToken
+ * @returns {Promise<Object>}
+ */
+const refreshAuth = async (refreshToken) => {
+  try {
+    const refreshTokenDoc = await tokenService.verifyToken(refreshToken, tokenTypes.REFRESH);
+    const user = await consoleUserService.getConsoleUserById(refreshTokenDoc.user);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Refresh token does not exist');
+    }
+    await refreshTokenDoc.remove();
+    return tokenService.generateAuthTokens(user);
+  } catch (error) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.message);
+  }
+};
+
+/**
  * Verify OTP
  * @param {string} otp
  * @param {string} userId
@@ -79,5 +98,6 @@ const hasBlockedDomain = (email) => {
 module.exports = {
   loginConsoleUserWithEmailAndPassword,
   setNewPassword,
+  refreshAuth,
   verifyOTP,
 };

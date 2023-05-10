@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// App schema is a placeholder for any plateform being built
+// App schema is a placeholder for any platform being built
 // fields can be added or removed base on requirement.
 
 const appSchema = new mongoose.Schema(

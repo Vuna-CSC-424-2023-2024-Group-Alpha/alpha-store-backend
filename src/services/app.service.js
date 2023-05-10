@@ -23,18 +23,18 @@ const createApp = async (req) => {
   }
 };
 
-const getApps = async () => {
+const getAllApps = async () => {
   const apps = await App.find();
   return apps;
 };
 
-const getAppById = async (id) => {
+const getApp = async (id) => {
   const app = await App.findOne({ _id: id });
   return app;
 };
 
 module.exports = {
   createApp,
-  getApps,
-  getAppById,
+  getAllApps,
+  getApp,
 };
