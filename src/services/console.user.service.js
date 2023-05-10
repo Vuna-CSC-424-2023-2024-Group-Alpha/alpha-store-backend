@@ -9,7 +9,7 @@ const getNextConsoleUserId = require('../utils/generateConsoleUserId');
  * @returns {Promise<ConsoleUser>}
  */
 const createConsoleUser = async (body) => {
-  if (await ConsoleUser.isEmailTaken(body.workmail)) {
+  if (await ConsoleUser.isWorkmailTaken(body.workmail)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The workmail entered already exists!');
   }
 
