@@ -14,7 +14,7 @@ const consoleUsers = [
     gender: 'Male',
     phoneNumber: '0701 156 8196',
     location: 'Abuja',
-    appId: '123457',
+    activeApp: ['645a25f53a899430e89af2c8'],
   },
   {
     consoleUserId: '467835002',
@@ -27,7 +27,7 @@ const consoleUsers = [
     gender: 'Male',
     phoneNumber: '0800 000 0000',
     location: 'Abuja',
-    appId: '123456',
+    activeApp: ['645a25f53a899430e89af2c6'],
   },
 
   {
@@ -41,7 +41,7 @@ const consoleUsers = [
     gender: 'Male',
     phoneNumber: '0800 000 0000',
     location: 'Abuja',
-    appId: '123457',
+    activeApp: ['645a25f53a899430e89af2c6'],
   },
 ];
 
