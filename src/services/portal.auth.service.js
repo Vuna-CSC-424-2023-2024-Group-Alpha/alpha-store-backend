@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const tokenService = require('./token.service');
 const portalUserService = require('./portal.user.service');
-const Token = require('../models/token.model');
+const { Token } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
@@ -91,20 +91,19 @@ const verifyEmail = async (verifyEmailCode, userId) => {
   }
 };
 
-
- const verifyOTP = async (otp, userId) => {
-   try {
-     const otpDoc = await tokenService.verifyAccessOTP(otp, userId);
-     const user = await consoleUserService.getConsoleUserById(otpDoc.user);
-     if (!user) {
-       throw new ApiError(httpStatus.NOT_FOUND, 'OTP does not exist');
-     }
-     await Token.deleteMany({ userId: user.id, type: tokenTypes.VERIFY_OTP });
-   } catch (error) {
-     if (error instanceof ApiError) throw error;
-     throw new ApiError(httpStatus.UNAUTHORIZED, 'Access verification with OTP failed');
-   }
- };
+const verifyOTP = async (otp, userId) => {
+  try {
+    const otpDoc = await tokenService.verifyAccessOTP(otp, userId);
+    const user = await consoleUserService.getConsoleUserById(otpDoc.user);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'OTP does not exist');
+    }
+    await Token.deleteMany({ userId: user.id, type: tokenTypes.VERIFY_OTP });
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Access verification with OTP failed');
+  }
+};
 
 module.exports = {
   loginUserWithEmailAndPassword,
