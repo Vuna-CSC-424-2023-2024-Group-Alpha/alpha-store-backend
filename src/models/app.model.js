@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-// App schema is a placeholder for any plateform being built
-// fields can be added or removed based on requirement.
+// App schema is recommended for multi-plateform feature.
+// Fields can be added or removed based on requirement.
 
 const appSchema = new mongoose.Schema(
   {
@@ -25,7 +25,7 @@ const appSchema = new mongoose.Schema(
       required: true,
     },
 
-    email: {
+    workmail: {
       type: String,
       required: true,
     },
@@ -49,10 +49,6 @@ const appSchema = new mongoose.Schema(
     ],
 
     ratings: {
-      type: Number,
-    },
-
-    capacity: {
       type: Number,
     },
 

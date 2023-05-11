@@ -3,7 +3,7 @@ const { password } = require('./custom.validation');
 
 const login = {
   body: Joi.object().keys({
-    email: Joi.string().required(),
+    workmail: Joi.string().required(),
     password: Joi.string().required(),
   }),
 };
@@ -22,7 +22,7 @@ const refreshTokens = {
 
 const resetPassword = {
   body: Joi.object().keys({
-    email: Joi.string().email().required(),
+    workmail: Joi.string().email().required(),
   }),
 };
 

@@ -9,7 +9,7 @@ const apps = [
     address: 'Abuja, Nigeria',
     contactPerson: 'App1 Contact',
     phoneNumber: '0800 000 0000',
-    email: 'sandbox@haqqman.agency',
+    workmail: 'sandbox@haqqman.agency',
     description: 'This description is just a placeholder',
     portalUrl: 'portal.example.com',
     consoleUrl: 'console.example.com',
@@ -24,7 +24,7 @@ const apps = [
     address: 'Lagos, Nigeria',
     contactPerson: 'App2 Contact',
     phoneNumber: '0800 000 0000',
-    email: 'sandbox@haqqman.agency',
+    workmail: 'sandbox@haqqman.agency',
     description: 'This description is just a placeholder',
     portalUrl: 'portal.example.com',
     consoleUrl: 'console.example.com',
@@ -39,7 +39,7 @@ module.exports = async function seedApps() {
     const seedApp = async () => {
       const exists = await App.findOne({ name: app.name });
       if (exists) {
-        // skip current brand if they already exist
+        // skip current app if they already exist
         logger.info(`App with name "${app.name}" already exists, skipping...`);
         return;
       }

@@ -4,10 +4,10 @@ const { roles } = require('../config/roles');
 
 const createConsoleUser = {
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
+    workmail: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     firstName: Joi.string().required(),
-    lastNam: Joi.string().required(),
+    lastName: Joi.string().required(),
     role: Joi.string().valid(...roles),
     status: Joi.string().valid(...['active', 'inactive']),
     dateOfBirth: Joi.date().format('DD-MM-YYYY'),
@@ -29,7 +29,7 @@ const updateConsoleUser = {
   }),
   body: Joi.object()
     .keys({
-      email: Joi.string().email(),
+      workmail: Joi.string().email(),
       password: Joi.string().custom(password),
       firstName: Joi.string(),
       lastName: Joi.string(),
@@ -51,7 +51,7 @@ const updateConsoleUserStatus = {
 
 const inviteConsoleUser = {
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
+    workmail: Joi.string().required().email(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     role: Joi.string().valid(...roles),

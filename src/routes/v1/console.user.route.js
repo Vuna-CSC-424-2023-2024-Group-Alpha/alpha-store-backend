@@ -129,9 +129,9 @@ module.exports = router;
  *                 type: string
  *               firstName:
  *                 type: string
- *               email:
+ *               workmail:
  *                 type: string
- *                 format: email
+ *                 format: workmail
  *                 description: must be unique
  *               role:
  *                 type: string
@@ -158,7 +158,7 @@ module.exports = router;
  *             schema:
  *                $ref: '#/components/schemas/ConsoleUser'
  *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
+ *         $ref: '#/components/responses/DuplicateWorkmail'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -213,7 +213,7 @@ module.exports = router;
  * /console/teams/invite:
  *   post:
  *     summary: Invite a new team member (Console user)
- *     description: Invite a new team member (Console user) to the console, the user to be invited receives an email with link to complete the invite.
+ *     description: Invite a new team member (Console user) to the console, the user to be invited receives an mail with link to complete the invite.
  *     tags: [Console Teams]
  *     security:
  *       - bearerAuth: []
@@ -228,9 +228,9 @@ module.exports = router;
  *                 type: string
  *               firstName:
  *                 type: string
- *               email:
+ *               workmail:
  *                 type: string
- *                 format: email
+ *                 format: workmail
  *                 description: must be unique
  *               role:
  *                 type: string
@@ -244,7 +244,7 @@ module.exports = router;
  *       "204":
  *         description: No content
  *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
+ *         $ref: '#/components/responses/DuplicateWorkmail'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  */
@@ -264,7 +264,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: token from invite console user email
+ *         description: token from invit console user workmail
  *     requestBody:
  *       required: true
  *       content:

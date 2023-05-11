@@ -166,7 +166,6 @@ const generateUserAccessOTP = async (user) => {
   const otp = _.random(100000, 999999);
   const expires = moment().add(config.jwt.verifyOTPExpirationMinutes, 'minutes');
   await saveToken(otp, user.id, expires, tokenTypes.VERIFY_OTP);
-  console.log(otp)
   return otp;
 };
 
