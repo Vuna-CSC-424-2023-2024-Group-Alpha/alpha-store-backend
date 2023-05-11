@@ -73,7 +73,7 @@ const VerifyPortalUserAccessWithOTP = async (payload) => {
 
 // Sends an OTP to grant access to an existing console user.
 const VerifyConsoleUserAccessWithOTP = async (payload) => {
-  const { to, firstName, ot, appName, logoEmail, portalUrl, consoleUrl } = payload;
+  const { to, firstName, otp, appName, logoEmail, portalUrl, consoleUrl } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_CONSOLE,

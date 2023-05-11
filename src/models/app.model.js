@@ -25,7 +25,7 @@ const appSchema = new mongoose.Schema(
       required: true,
     },
 
-    email: {
+    workmail: {
       type: String,
       required: true,
     },
@@ -49,10 +49,6 @@ const appSchema = new mongoose.Schema(
     ],
 
     ratings: {
-      type: Number,
-    },
-
-    capacity: {
       type: Number,
     },
 

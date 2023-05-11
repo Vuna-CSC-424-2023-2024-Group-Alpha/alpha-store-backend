@@ -38,12 +38,12 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - email
+ *               - workmail
  *               - password
  *             properties:
- *               email:
+ *               workmail:
  *                 type: string
- *                 format: email
+ *                 format: workmail
  *               password:
  *                 type: string
  *                 format: password
@@ -63,23 +63,23 @@ module.exports = router;
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "401":
- *         description: Invalid email or password
+ *         description: Invalid workmail or password
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               code: 401
- *               message: Invalid email or password
+ *               message: Invalid workmail or password
  *       "400":
- *         description: Invalid email domain
+ *         description: Invalid workmail domain
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               code: 400
- *               message: Invalid email domain
+ *               message: Invalid workmail domain
  */
 
 /**
@@ -113,7 +113,7 @@ module.exports = router;
  * /console/auth/reset-password:
  *   post:
  *     summary: Reset password
- *     description: An email will be sent to reset password.
+ *     description: A mail will be sent to reset password.
  *     tags: [Console Auth]
  *     requestBody:
  *       required: true
@@ -122,13 +122,13 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - email
+ *               - workmail
  *             properties:
- *               email:
+ *               workmail:
  *                 type: string
- *                 format: email
+ *                 format: workmail
  *             example:
- *               email: fake@example.com
+ *               workmail: workmail@example.com
  *     responses:
  *       "204":
  *         description: No content

@@ -14,6 +14,7 @@ const consoleUsers = [
     gender: 'Male',
     phoneNumber: '0701 156 8196',
     location: 'Abuja',
+    appId: '123457',
   },
   {
     consoleUserId: '467835002',
@@ -26,16 +27,31 @@ const consoleUsers = [
     gender: 'Male',
     phoneNumber: '0800 000 0000',
     location: 'Abuja',
+    appId: '123456',
+  },
+
+  {
+    consoleUserId: '467835003',
+    firstName: 'Sand1',
+    lastName: 'Box1',
+    workmail: 'workmail@example.com',
+    password: 'c@@lPassw0rd',
+    role: 'admin',
+    dateOfBirth: '11-13-1981', // format: MM-DD-YYYY
+    gender: 'Male',
+    phoneNumber: '0800 000 0000',
+    location: 'Abuja',
+    appId: '123457',
   },
 ];
 
 module.exports = async function seedConsoleUsers() {
   const consoleUserPromises = consoleUsers.map((consoleUser) => {
     const seedConsoleUser = async () => {
-      const exists = await ConsoleUser.findOne({ email: consoleUser.email });
+      const exists = await ConsoleUser.findOne({ workmail: consoleUser.workmail });
       if (exists) {
         // skip current consoleUser if they already exist
-        logger.info(`console user with email "${consoleUser.email}" already exists, skipping...`);
+        logger.info(`console user with workmail "${consoleUser.workmail}" already exists, skipping...`);
         return;
       }
       await ConsoleUser.create(consoleUser);

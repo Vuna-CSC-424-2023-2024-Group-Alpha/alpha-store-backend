@@ -7,7 +7,7 @@ const createConsoleUser = {
     workmail: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     firstName: Joi.string().required(),
-    lastNam: Joi.string().required(),
+    lastName: Joi.string().required(),
     role: Joi.string().valid(...roles),
     status: Joi.string().valid(...['active', 'inactive']),
     dateOfBirth: Joi.date().format('DD-MM-YYYY'),

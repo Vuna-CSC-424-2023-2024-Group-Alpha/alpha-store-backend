@@ -8,8 +8,8 @@ const login = catchAsync(async (req, res) => {
   const user = await consoleAuthService.loginConsoleUserWithWorkmailAndPassword(workmail, password);
   const tokens = await tokenService.generateAuthTokens(user);
   const otp = await tokenService.generateUserAccessOTP(user);
-  const activeApp = await appService.getApp(user.activeApp)
-  // send otp to console user email
+  const activeApp = await appService.getApp(user.activeApp);
+  // send otp to console user workmail
   await emailService.VerifyConsoleUserAccessWithOTP({
     to: user.workmail,
     firstName: user.firstName,
@@ -29,7 +29,7 @@ const logout = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email, 'Console_User');
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.workmail, 'Console_User');
   // TODO: Implement sendResetPasswordEmail
   // await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
   res.status(httpStatus.NO_CONTENT).send();
@@ -49,8 +49,6 @@ const verifyOTP = catchAsync(async (req, res) => {
   await consoleAuthService.verifyOTP(req.body.otp, req.user.id);
   res.status(httpStatus.NO_CONTENT).send();
 });
-
-
 
 module.exports = {
   login,

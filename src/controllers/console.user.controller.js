@@ -27,7 +27,7 @@ const updateConsoleUserStatus = catchAsync(async (req, res) => {
 });
 
 const inviteConsoleUser = catchAsync(async (req, res) => {
-  // check if user with email already exists
+  // check if user with workmail already exists
   const user = await consoleUserService.getConsoleUserByWorkmail(req.body.workmail);
   if (user) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The workmail provided already exists!');
