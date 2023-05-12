@@ -26,6 +26,19 @@ const loginConsoleUserWithWorkmailAndPassword = async (workmail, password) => {
 };
 
 /**
+ * 
+ * @param {String} refreshToken 
+ * @returns {Promise}
+ */
+const logout = async (refreshToken) => {
+  const refreshTokenDoc = await Token.findOne({ token:refreshToken,  typr: tokenTypes.REFRESH, blacklisted: false });
+  if (!refreshTokenDoc) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Not found");
+  }
+  await refreshTokenDoc.remove()
+}
+
+/**
  * Reset password
  * @param {string} setNewPassword
  * @param {string} newPassword
@@ -97,6 +110,7 @@ const hasBlockedDomain = (workmail) => {
 
 module.exports = {
   loginConsoleUserWithWorkmailAndPassword,
+  logout,
   setNewPassword,
   refreshAuth,
   verifyOTP,

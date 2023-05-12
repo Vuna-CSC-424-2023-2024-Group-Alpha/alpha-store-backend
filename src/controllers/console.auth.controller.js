@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 
-const { consoleAuthService, portalAuthService, tokenService, emailService, appService } = require('../services');
+const { consoleAuthService, tokenService, emailService, appService } = require('../services');
 
 const login = catchAsync(async (req, res) => {
   const { workmail, password } = req.body;
@@ -23,8 +23,7 @@ const login = catchAsync(async (req, res) => {
 });
 
 const logout = catchAsync(async (req, res) => {
-  // reuse default authService.logout since it's user model agnostic
-  await portalAuthService.logout(req.body.refreshToken);
+  await consoleAuthService.logout(req.body.refreshToken);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
