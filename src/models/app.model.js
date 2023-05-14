@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// App schema is recommended for multi-plateform feature.
+// App schema is recommended for multi-platform feature.
 // Fields can be added or removed based on requirement.
 
 const appSchema = new mongoose.Schema(
@@ -28,6 +28,12 @@ const appSchema = new mongoose.Schema(
     workmail: {
       type: String,
       required: true,
+    },
+
+    portalOtpOption: {
+      type: String,
+      enum: ['optional', 'required'],
+      default: 'optional',
     },
 
     status: {

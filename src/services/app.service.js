@@ -33,8 +33,27 @@ const getApp = async (id) => {
   return app;
 };
 
+const updatePortalOtpOption = async (req) => {
+  try {
+    const { id } = req.params;
+    const { portalOtpOption } = req.body;
+
+    const app = await App.findByIdAndUpdate(id, { portalOtpOption }, { new: true });
+
+    if (!app) {
+      return res.status(404).json({ error: 'App not found' });
+    }
+
+    return res.status(200).json(app);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createApp,
   getAllApps,
   getApp,
+  updatePortalOtpOption,
 };
+ 

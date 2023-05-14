@@ -79,6 +79,23 @@ const deletePortalUserById = async (userId) => {
   return user;
 };
 
+const updateOtpOption = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { otpOption } = req.body;
+
+    const portalUser = await PortalUser.findByIdAndUpdate(id, { otpOption }, { new: true });
+
+    if (!portalUser) {
+      return res.status(404).json({ error: 'Portal user not found' });
+    }
+
+    return res.status(200).json(portalUser);
+  } catch (error) {
+    consol.log(error);
+  }
+};
+
 module.exports = {
   createPortalUser,
   queryPortalUsers,
@@ -86,4 +103,5 @@ module.exports = {
   getPortalUserByEmail,
   updatePortalUserById,
   deletePortalUserById,
+  updateOtpOption,
 };
