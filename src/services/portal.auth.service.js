@@ -108,14 +108,11 @@ const verifyOTP = async (otp, userId) => {
 
 const updateOtpOption = async (req) => {
   try {
-    console.log(req.user);
     const { id } = req.user;
     const { otpOption } = req.body;
 
-    console.log(id, otpOption);
     const portalUser = await PortalUser.findByIdAndUpdate(id, { otpOption }, { new: true });
 
-    console.log(portalUser);
     if (!portalUser) {
       throw new ApiError(httpStatus.NOT_FOUND, ' Portal User not found');
     }
