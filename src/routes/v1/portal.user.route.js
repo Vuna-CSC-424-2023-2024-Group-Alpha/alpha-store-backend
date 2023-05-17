@@ -17,7 +17,6 @@ router
   .patch(auth('manageUsers'), validate(portalUserValidation.updateUser), portalUserController.updateUser)
   .delete(auth('manageUsers'), validate(portalUserValidation.deleteUser), portalUserController.deleteUser);
 
-router.patch('update-OTP-option', portalUserController.updateOtpOption);
 
 module.exports = router;
 

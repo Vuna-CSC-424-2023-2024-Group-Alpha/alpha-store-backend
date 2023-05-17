@@ -9,13 +9,19 @@ const createAccount = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
 
+const updateOtpOption = catchAsync(async (req, res) => {
+  const portalUser = await portalAuthService.updateOtpOption(req);
+  res.send(portalUser);
+});
+
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await portalAuthService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
+
   // send user OTP
   const accessOTP = await tokenService.generateUserAccessOTP(user);
-  const activeApp = await appService.getApp(user.app)
+  const activeApp = await appService.getApp(user.app);
   await emailService.VerifyPortalUserAccessWithOTP({
     to: user.email,
     firstName: user.firstName,
@@ -65,6 +71,7 @@ const verifyOTP = catchAsync(async (req, res) => {
 
 module.exports = {
   createAccount,
+  updateOtpOption,
   login,
   logout,
   refreshTokens,
