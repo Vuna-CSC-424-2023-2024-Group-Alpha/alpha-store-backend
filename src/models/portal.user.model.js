@@ -40,6 +40,12 @@ const portalUserSchema = mongoose.Schema(
       },
       private: true, // used by the toJSON plugin
     },
+
+    otpOption: {
+      type: Boolean,
+      default: false,
+    },
+
     role: {
       type: String,
       enum: roles,
@@ -49,7 +55,7 @@ const portalUserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    
+
     app: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'App',

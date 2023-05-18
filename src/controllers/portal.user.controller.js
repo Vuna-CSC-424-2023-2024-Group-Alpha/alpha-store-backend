@@ -2,22 +2,22 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { userService } = require('../services'); //userServive or portalUserService
+const { portalUserService } = require('../services');
 
 const createUser = catchAsync(async (req, res) => {
-  const user = await userService.createUser(req.body);
+  const user = await portalUserService.createUser(req.body);
   res.status(httpStatus.CREATED).send(user);
 });
 
 const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await userService.queryUsers(filter, options);
+  const result = await portalUserService.queryUsers(filter, options);
   res.send(result);
 });
 
 const getUser = catchAsync(async (req, res) => {
-  const user = await userService.getUserById(req.params.userId);
+  const user = await portalUserService.getUserById(req.params.userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -25,12 +25,12 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const user = await userService.updateUserById(req.params.userId, req.body);
+  const user = await portalUserService.updateUserById(req.params.userId, req.body);
   res.send(user);
 });
 
 const deleteUser = catchAsync(async (req, res) => {
-  await userService.deleteUserById(req.params.userId);
+  await portalUserService.deleteUserById(req.params.userId);
   res.status(httpStatus.NO_CONTENT).send();
 });
 

@@ -9,20 +9,28 @@ const createAccount = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
 
+const updateOtpOption = catchAsync(async (req, res) => {
+  const portalUser = await portalAuthService.updateOtpOption(req);
+  res.send(portalUser);
+});
+
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await portalAuthService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
-  // send user OTP
-  const accessOTP = await tokenService.generateUserAccessOTP(user);
-  const activeApp = await appService.getApp(user.app)
-  await emailService.VerifyPortalUserAccessWithOTP({
-    to: user.email,
-    firstName: user.firstName,
-    otp: accessOTP,
-    logoEmail: activeApp.branding.logoEmail,
-    portalUrl: activeApp.portalUrl,
-  });
+  let useOtp = user.otpOption;
+  if (useOtp) {
+    // send user OTP
+    const accessOTP = await tokenService.generateUserAccessOTP(user);
+    const activeApp = await appService.getApp(user.app);
+    await emailService.VerifyPortalUserAccessWithOTP({
+      to: user.email,
+      firstName: user.firstName,
+      otp: accessOTP,
+      logoEmail: activeApp.branding.logoEmail,
+      portalUrl: activeApp.portalUrl,
+    });
+  }
   res.send({ user, tokens });
 });
 
@@ -65,6 +73,7 @@ const verifyOTP = catchAsync(async (req, res) => {
 
 module.exports = {
   createAccount,
+  updateOtpOption,
   login,
   logout,
   refreshTokens,

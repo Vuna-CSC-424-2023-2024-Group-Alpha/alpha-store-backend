@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const tokenService = require('./token.service');
 const portalUserService = require('./portal.user.service');
 const { Token } = require('../models');
+const { PortalUser } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
@@ -105,6 +106,23 @@ const verifyOTP = async (otp, userId) => {
   }
 };
 
+const updateOtpOption = async (req) => {
+  try {
+    const { id } = req.user;
+    const { otpOption } = req.body;
+
+    const portalUser = await PortalUser.findByIdAndUpdate(id, { otpOption }, { new: true });
+
+    if (!portalUser) {
+      throw new ApiError(httpStatus.NOT_FOUND, ' Portal User not found');
+    }
+
+    return portalUser;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
@@ -112,4 +130,5 @@ module.exports = {
   setNewPassword,
   verifyEmail,
   verifyOTP,
+  updateOtpOption,
 };

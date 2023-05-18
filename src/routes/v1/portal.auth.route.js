@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post('/create-account', validate(portalAuthValidation.createAccount), portalAuthController.createAccount);
 router.post('/login', validate(portalAuthValidation.login), portalAuthController.login);
+router.patch('/update-OTP-option', auth(), portalAuthController.updateOtpOption);
 router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
 router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), portalAuthController.refreshTokens);
 router.post('/reset-password', validate(portalAuthValidation.resetPassword), portalAuthController.resetPassword);
@@ -17,7 +18,7 @@ router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail),
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
 
 module.exports = router;
- 
+
 /**
  * @swagger
  * tags:
