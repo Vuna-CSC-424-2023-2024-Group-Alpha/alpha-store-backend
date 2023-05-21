@@ -19,7 +19,9 @@ const login = catchAsync(async (req, res) => {
   const user = await portalAuthService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   let useOtp = user.otpOption;
-  if (useOtp) {
+  let appOtp = activeApp.portalOtpOption;
+
+  if (useOtp || appOtp==="required") {
     // send user OTP
     const accessOTP = await tokenService.generateUserAccessOTP(user);
     const activeApp = await appService.getApp(user.app);

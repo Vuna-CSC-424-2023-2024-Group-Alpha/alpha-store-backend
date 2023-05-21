@@ -6,9 +6,8 @@ const { appValidation } = require('../../validations');
 const router = express.Router();
 
 router.get('/', appController.getApp);
-router.post('./create', validate(appValidation.createApp), appController.createApp);
-router.patch('./updated-OTP-option', appController.updatePortalOtpOption);
+router.post('/create', validate(appValidation.createApp), appController.createApp);
+
+router.patch('/use-OTP', appController.updatePortalOtpOption);
 
 module.exports = router;
-
-
