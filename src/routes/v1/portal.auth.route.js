@@ -154,6 +154,30 @@ module.exports = router;
 
 /**
  * @swagger
+ * /portal/auth/update-OTP-option:
+ *   patch:
+ *     summary: sets the use of the portalUser two factor authentication  to true or false
+ *     tags: [Portal Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *              - otpOption
+ *             properties:
+ *                otpOption:
+ *                  type: boolean
+ *     responses:
+ *       "204":
+ *         description: No content
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
  * /portal/auth/refresh-tokens:
  *   post:
  *     summary: Refresh auth tokens
