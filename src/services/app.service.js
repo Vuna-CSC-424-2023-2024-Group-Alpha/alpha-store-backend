@@ -38,12 +38,12 @@ const updatePortalOtpOption = async (req) => {
   try {
     const { id, portalOtpOption } = req.body;
 
-    const app = await App.findById(id);
-    
+    const app = await App.findByIdAndUpdate(id, { portalOtpOption }, { new: true });
+
     if (!app) {
       throw new ApiError(httpStatus.NOT_FOUND, 'App not found ');
     }
-    app.portalOtpOption = portalOtpOption;
+    // app.portalOtpOption = portalOtpOption;
     return app;
   } catch (error) {
     console.log(error);
