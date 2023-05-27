@@ -18,13 +18,14 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await portalAuthService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
+  const activeApp = await appService.getApp(user.app);
   let useOtp = user.otpOption;
   let appOtp = activeApp.portalOtpOption;
 
-  if (useOtp || appOtp==="required") {
+  if (useOtp || appOtp === 'required') {
     // send user OTP
     const accessOTP = await tokenService.generateUserAccessOTP(user);
-    const activeApp = await appService.getApp(user.app);
+
     await emailService.VerifyPortalUserAccessWithOTP({
       to: user.email,
       firstName: user.firstName,

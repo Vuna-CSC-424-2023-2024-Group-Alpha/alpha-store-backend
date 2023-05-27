@@ -11,10 +11,12 @@ const getAllApps = catchAsync(async (req, res) => {
   res.json({ apps });
 });
 
-const createApp = catchAsync(async (req, res) => {
-  const app = await appService.createApp(req);
-  res.json({ app });
-});
+
+//Disabled by default unless needed!"
+// const createApp = catchAsync(async (req, res) => {
+//   const app = await appService.createApp(req);
+//   res.json({ app });
+// });
 
 const updatePortalOtpOption = catchAsync(async (req, res) => {
   const app = await appService.updatePortalOtpOption(req);
@@ -24,6 +26,6 @@ const updatePortalOtpOption = catchAsync(async (req, res) => {
 module.exports = {
   getApp,
   getAllApps,
-  createApp,
+  // createApp,
   updatePortalOtpOption,
 };

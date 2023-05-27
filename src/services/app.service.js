@@ -1,28 +1,26 @@
-//
 const { App } = require('../models');
 const ApiError = require('../utils/ApiError');
 
-// app.service is a placeholder for any plateform being built
-// names can be  modified base on requirement.
+//Disabled by default unless needed!"
 
-const createApp = async (req) => {
-  let images;
-  // add images to the app object
-  if (req.files) {
-    images = req.files.map((file) => file.path);
-  }
+// const createApp = async (req) => {
+//   let images;
+//   // add images to the app object
+//   if (req.files) {
+//     images = req.files.map((file) => file.path);
+//   }
 
-  try {
-    const app = await App.create({
-      ...req.body,
-      images,
-    });
+//   try {
+//     const app = await App.create({
+//       ...req.body,
+//       images,
+//     });
 
-    return app;
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return app;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const getAllApps = async () => {
   const apps = await App.find();
@@ -43,7 +41,7 @@ const updatePortalOtpOption = async (req) => {
     if (!app) {
       throw new ApiError(httpStatus.NOT_FOUND, 'App not found ');
     }
-    // app.portalOtpOption = portalOtpOption;
+
     return app;
   } catch (error) {
     console.log(error);
@@ -51,7 +49,7 @@ const updatePortalOtpOption = async (req) => {
 };
 
 module.exports = {
-  createApp,
+  // createApp,
   getAllApps,
   getApp,
   updatePortalOtpOption,
