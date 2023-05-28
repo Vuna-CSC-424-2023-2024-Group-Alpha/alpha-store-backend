@@ -25,6 +25,6 @@ const updatePortalOtpOption = catchAsync(async (req, res) => {
 module.exports = {
   getApp,
   getAllApps,
-  createApp,
+  // createApp,
   updatePortalOtpOption,
 };

@@ -49,7 +49,7 @@ const updatePortalOtpOption = async (req) => {
 };
 
 module.exports = {
-  createApp,
+  // createApp,
   getAllApps,
   getApp,
   updatePortalOtpOption,
