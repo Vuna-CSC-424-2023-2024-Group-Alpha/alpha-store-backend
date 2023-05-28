@@ -8,14 +8,14 @@ const portalUsers = [
     lastName: 'Doe',
     email: 'fake@example.com',
     password: 'password1',
-    app: ['645a25f53a899430e89af2c8'],
+    app: ['6473371118833922f0a04492'],
   },
   {
     firstName: 'Gideon',
     lastName: 'Dadi',
     email: 'gideon@example.com',
     password: 'password1',
-    app: ['645a25f53a899430e89af2c6'],
+    app: ['6473371118833922f0a04492'],
   },
 ];
 

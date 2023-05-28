@@ -87,7 +87,7 @@ const appSchema = new mongoose.Schema(
 );
 
 appSchema.pre('save', function (next) {
-  this.slug = this.name.split(' ').join('-');
+  this.slug = this.name.split(' ').join('-').toLowerCase() + '-app';
   next();
 });
 

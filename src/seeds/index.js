@@ -3,7 +3,6 @@ const config = require('../config/config');
 const logger = require('../config/logger');
 const seedConsoleUsers = require('./console.users');
 const seedPortalUsers = require('./portal.users');
-const seedApps = require('./app');
 
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');
@@ -21,7 +20,6 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
 const seed = async () => {
   try {
     await seedConsoleUsers();
-    await seedApps();
     await seedPortalUsers();
     logger.info('seeding completed successfully');
   } catch (err) {
