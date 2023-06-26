@@ -9,6 +9,7 @@ const login = catchAsync(async (req, res) => {
   const tokens = await tokenService.generateAuthTokens(user);
   const otp = await tokenService.generateUserAccessOTP(user);
   const activeApp = await appService.getApp(user.activeApp);
+  console.log(user);
   // send otp to console user workmail
   await emailService.VerifyConsoleUserAccessWithOTP({
     to: user.workmail,

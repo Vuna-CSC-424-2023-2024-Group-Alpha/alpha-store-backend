@@ -42,6 +42,11 @@ const appSchema = new mongoose.Schema(
       default: 'active',
     },
 
+    slug: {
+      type: String,
+      slug: 'name',
+    },
+
     description: {
       type: String,
     },
@@ -80,6 +85,11 @@ const appSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+appSchema.pre('save', function (next) {
+  this.slug = this.name.split(' ').join('-').toLowerCase() + '-app';
+  next();
+});
 
 const App = mongoose.model('App', appSchema);
 
