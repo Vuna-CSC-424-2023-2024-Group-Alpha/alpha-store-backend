@@ -9,7 +9,6 @@ const consoleUsers = [
     lastName: 'Manager',
     workmail: 'webmanager@haqqman.agency',
     password: 'P@ssw0rd!',
-    role: 'admin',
     dateOfBirth: '11-13-1980', // format: MM-DD-YYYY
     gender: 'Male',
     phoneNumber: '0701 156 8196',
@@ -18,11 +17,10 @@ const consoleUsers = [
   },
   {
     consoleUserId: '467835002',
-    firstName: 'Sand',
-    lastName: 'Box',
+    firstName: 'Agency',
+    lastName: 'Sandbox',
     workmail: 'sandbox@haqqman.agency',
     password: 'c@@lPassw0rd',
-    role: 'admin',
     dateOfBirth: '11-13-1980', // format: MM-DD-YYYY
     gender: 'Male',
     phoneNumber: '0800 000 0000',
@@ -32,11 +30,10 @@ const consoleUsers = [
 
   {
     consoleUserId: '467835003',
-    firstName: 'Sand1',
-    lastName: 'Box1',
+    firstName: 'Agency2',
+    lastName: 'Sandbox2',
     workmail: 'workmail@example.com',
     password: 'c@@lPassw0rd',
-    role: 'admin',
     dateOfBirth: '11-13-1981', // format: MM-DD-YYYY
     gender: 'Male',
     phoneNumber: '0800 000 0000',

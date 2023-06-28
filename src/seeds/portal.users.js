@@ -4,17 +4,17 @@ const logger = require('../config/logger');
 
 const portalUsers = [
   {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'fake@example.com',
-    password: 'password1',
+    firstName: 'Haqq',
+    lastName: 'Sandbox',
+    email: 'sandbox@haqqman.agency',
+    password: 'P@ssw0rd!Portal',
     app: ['6473371118833922f0a04492'],
   },
   {
     firstName: 'Gideon',
     lastName: 'Dadi',
     email: 'gideon@example.com',
-    password: 'password1',
+    password: 'P@ssw0rd!Gideon',
     app: ['6473371118833922f0a04492'],
   },
 ];
