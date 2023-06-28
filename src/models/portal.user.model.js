@@ -49,7 +49,7 @@ const portalUserSchema = mongoose.Schema(
     role: {
       type: String,
       enum: roles,
-      default: 'user',
+      default: 'manager',
     },
     isEmailVerified: {
       type: Boolean,
