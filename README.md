@@ -167,12 +167,12 @@ To view the list of available APIs and their specifications, run the server and 
 List of available default routes:
 
 **Auth routes**:\
-`POST /v1/auth/create-account` - register\
-`POST /v1/auth/login` - login\
-`POST /v1/auth/refresh-tokens` - refresh auth tokens\
-`POST /v1/auth/forgot-password` - send reset password email\
-`POST /v1/auth/reset-password` - reset password\
-`POST /v1/auth/send-verification-email` - send verification email\
+`POST /v1/auth/create-account` - Register
+`POST /v1/auth/login` - Log In
+`POST /v1/auth/refresh-tokens` - Refresh Auth Tokens
+`POST /v1/auth/reset-password` - Send Reset Password eMail
+`POST /v1/auth/set-new-password` - Reset Password
+`POST /v1/auth/resend-verification-email` - send verification email\
 `POST /v1/auth/verify-email` - verify email
 
 **User routes**:\

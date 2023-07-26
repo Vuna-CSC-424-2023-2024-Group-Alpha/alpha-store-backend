@@ -58,9 +58,9 @@ const setNewPassword = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const sendVerificationEmail = catchAsync(async (req, res) => {
+const resendVerificationEmail = catchAsync(async (req, res) => {
   const verifyEmailCode = await tokenService.generateVerifyEmailCode(req.user);
-  await emailService.sendVerificationEmail(req.user.email, verifyEmailCode);
+  await emailService.resendVerificationEmail(req.user.email, verifyEmailCode);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
@@ -82,7 +82,7 @@ module.exports = {
   refreshTokens,
   resetPassword,
   setNewPassword,
-  sendVerificationEmail,
+  resendVerificationEmail,
   verifyEmail,
   verifyOTP,
 };
