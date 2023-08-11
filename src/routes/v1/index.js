@@ -1,11 +1,14 @@
 const express = require('express');
-const portalAuthRoute = require('./portal.auth.route');
+// General Routes
 const appRoute = require('./app.route');
-const portalUserRoute = require('./portal.user.route');
-const consoleAuthRoute = require('./console.auth.route');
-const consoleUserRoute = require('./console.user.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
+// Portal Routes
+const portalAuthRoute = require('./portal.auth.route');
+const portalUserRoute = require('./portal.user.route');
+// Console Routes
+const consoleAuthRoute = require('./console.auth.route');
+const consoleUserRoute = require('./console.user.route');
 
 const router = express.Router();
 
@@ -14,14 +17,16 @@ const defaultRoutes = [
     path: '/app',
     route: appRoute,
   },
+  // Portal Routes
   {
     path: '/portal/auth',
     route: portalAuthRoute,
   },
   {
-    path: '/portal/users',
+    path: '/portal/user',
     route: portalUserRoute,
   },
+  // Console Routes
   {
     path: '/console/auth',
     route: consoleAuthRoute,

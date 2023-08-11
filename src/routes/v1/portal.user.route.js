@@ -29,7 +29,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /portal/users:
+ * /portal/user:
  *   post:
  *     summary: Create a user
  *     description: Only admins can create other users.
@@ -149,7 +149,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /portal/users/{id}:
+ * /portal/user/{id}:
  *   get:
  *     summary: Get a user
  *     description: Logged in users can fetch only their own user information. Only admins can fetch other users.
