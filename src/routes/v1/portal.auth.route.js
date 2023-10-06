@@ -15,8 +15,8 @@ router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), por
 router.post('/resend-verification-email', auth(), portalAuthController.resendVerificationEmail);
 router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
-router.put('/update-password', auth(), portalAuthController.updatePassword);
-router.put('/modify-email/:token', validate(portalAuthValidation.modifyEmail), portalAuthController.modifyEmail);
+// router.put('/update-password', auth(), portalAuthController.updatePassword);
+// router.put('/modify-email/:token', validate(portalAuthValidation.modifyEmail), portalAuthController.modifyEmail);
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
 router.patch('/update-OTP-option', auth(), portalAuthController.updateOtpOption);
 
@@ -44,7 +44,6 @@ module.exports = router;
  *             required:
  *               - firstName
  *               - lastName
- *               - phoneNumber
  *               - email
  *               - password
  *             properties:
@@ -56,8 +55,6 @@ module.exports = router;
  *                 type: string
  *                 format: email
  *                 description: must be unique
- *               phoneNumber:
- *                 type: string
  *               password:
  *                 type: string
  *                 format: password
@@ -67,7 +64,6 @@ module.exports = router;
  *               firstName: John
  *               lastName: Doe
  *               email: fake@example.com
- *               phoneNumber: 0800 000 0000
  *               password: P@ssword!Example
  *     responses:
  *       "201":
