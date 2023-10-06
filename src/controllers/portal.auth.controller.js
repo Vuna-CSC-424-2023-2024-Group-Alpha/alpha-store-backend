@@ -75,6 +75,27 @@ const verifyOTP = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const updatePassword = catchAsync(async (req, res) => {
+  try {
+    const { id, email } = req.user;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    const user = await portalAuthService.loginUserWithEmailAndPassword(email, currentPassword);
+    if (!user) {
+      throw new ApiError(400, 'Incorrect password');
+    }
+    if (newPassword !== confirmNewPassword) {
+      throw new ApiError(400, 'Passwords are not the same.');
+    }
+    await portalAuthService.updatePassword(id, newPassword);
+    res.status(httpStatus.NO_CONTENT).send();
+  } catch (error) {
+    // Handle the error appropriately without re-throwing it
+    res
+      .status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR)
+      .send({ error: error.message || 'An unexpected error occurred.' });
+  }
+});
+
 // Trigger email update
 const updateEmail = catchAsync(async (req, res) => {
   await portalAuthService.updateEmail(req.user, req.body);
@@ -96,6 +117,7 @@ module.exports = {
   resetPassword,
   setNewPassword,
   resendVerificationEmail,
+  updatePassword,
   verifyEmail,
   verifyOTP,
   updateEmail,

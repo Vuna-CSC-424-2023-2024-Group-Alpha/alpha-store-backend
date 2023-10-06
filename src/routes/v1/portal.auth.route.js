@@ -15,7 +15,7 @@ router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), por
 router.post('/resend-verification-email', auth(), portalAuthController.resendVerificationEmail);
 router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
-// router.put('/update-password', auth(), portalAuthController.updatePassword);
+router.put('/update-password', auth(), portalAuthController.updatePassword);
 router.post('/update-email', auth(), validate(portalAuthValidation.updateEmail), portalAuthController.updateEmail);
 router.patch('/update-email/:code', validate(portalAuthValidation.confirmUpdateEmail), portalAuthController.confirmUpdateEmail);
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);

@@ -124,6 +124,31 @@ const updateOtpOption = async (req) => {
 };
 
 /**
+ * Update password of portal user
+ */
+const updatePassword = async (userId, newPassword) => {
+  try {
+    // Update the user's password
+    await portalUserService.updatePortalUserById(userId, { password: newPassword });
+  } catch (error) {
+    // If an error occurs during the update, handle it appropriately
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+      // If the provided userId is invalid (not a valid ObjectId)
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid user ID');
+    } else if (error.name === 'ValidationError') {
+      // If the provided newPassword is invalid or doesn't meet validation criteria
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid password. Please provide a valid password.');
+    } else if (error.name === 'UserNotFoundError') {
+      // If the user with the given userId is not found in the database
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+    } else {
+      // For any other unexpected error, throw a generic error message
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred while updating the password.');
+    }
+  }
+};
+
+/**
  * Update existing email for authenticated user
  */
 const updateEmail = async (user, body) => {
@@ -162,6 +187,7 @@ module.exports = {
   setNewPassword,
   verifyEmail,
   verifyOTP,
+  updatePassword,
   updateOtpOption,
   updateEmail,
   confirmUpdateEmail,
