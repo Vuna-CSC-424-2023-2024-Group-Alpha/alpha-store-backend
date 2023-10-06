@@ -55,6 +55,22 @@ const verifyOTP = {
   }),
 };
 
+const updateEmail = {
+  body: Joi.object().keys({
+    oldEmail: Joi.string().email().required(),
+    newEmail: Joi.string().email().required(),
+  }),
+};
+
+const confirmUpdateEmail = {
+  params: Joi.object().keys({
+    code: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    newEmail: Joi.string().email().required(),
+  }),
+};
+
 module.exports = {
   createAccount,
   login,
@@ -64,4 +80,6 @@ module.exports = {
   setNewPassword,
   verifyEmail,
   verifyOTP,
+  updateEmail,
+  confirmUpdateEmail,
 };

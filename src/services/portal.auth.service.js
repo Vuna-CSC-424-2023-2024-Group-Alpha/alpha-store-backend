@@ -123,6 +123,38 @@ const updateOtpOption = async (req) => {
   }
 };
 
+/**
+ * Update existing email for authenticated user
+ */
+const updateEmail = async (user, body) => {
+  const checkUser = await portalUserService.getPortalUserByEmail(body.oldEmail);
+  if (!checkUser) {
+    throw new ApiError(404, 'No user exists for this email address');
+  }
+
+  if (user.email !== body.oldEmail) {
+    throw new ApiError(400, 'Old Email does not match current email');
+  }
+
+  const code = await tokenService.generateUpdateEmailCode(user);
+
+  await emailService.PortalUserUpdateEmail({
+    to: body.newEmail,
+    firstName: user.firstName,
+    code,
+  });
+};
+
+const confirmUpdateEmail = async (code, newEmail) => {
+  const updateEmailTokenDoc = await tokenService.verifyUpdateEmailCode(code);
+  console.log(updateEmailTokenDoc);
+  const user = await portalUserService.getPortalUserById(updateEmailTokenDoc.user);
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid token!');
+  }
+  await portalUserService.updatePortalUserById(user.id, { email: newEmail });
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
@@ -131,4 +163,6 @@ module.exports = {
   verifyEmail,
   verifyOTP,
   updateOtpOption,
+  updateEmail,
+  confirmUpdateEmail,
 };

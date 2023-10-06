@@ -75,6 +75,18 @@ const verifyOTP = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+// Trigger email update
+const updateEmail = catchAsync(async (req, res) => {
+  await portalAuthService.updateEmail(req.user, req.body);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
+// Verify and confirm request to update email
+const confirmUpdateEmail = catchAsync(async (req, res) => {
+  await portalAuthService.confirmUpdateEmail(req.params.code, req.body.newEmail);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 module.exports = {
   createAccount,
   updateOtpOption,
@@ -86,4 +98,6 @@ module.exports = {
   resendVerificationEmail,
   verifyEmail,
   verifyOTP,
+  updateEmail,
+  confirmUpdateEmail,
 };

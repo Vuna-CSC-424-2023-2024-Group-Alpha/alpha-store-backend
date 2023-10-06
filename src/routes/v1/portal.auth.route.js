@@ -16,7 +16,8 @@ router.post('/resend-verification-email', auth(), portalAuthController.resendVer
 router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
 // router.put('/update-password', auth(), portalAuthController.updatePassword);
-// router.put('/modify-email/:token', validate(portalAuthValidation.modifyEmail), portalAuthController.modifyEmail);
+router.post('/update-email', auth(), validate(portalAuthValidation.updateEmail), portalAuthController.updateEmail);
+router.patch('/update-email/:code', validate(portalAuthValidation.confirmUpdateEmail), portalAuthController.confirmUpdateEmail);
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
 router.patch('/update-OTP-option', auth(), portalAuthController.updateOtpOption);
 
@@ -317,17 +318,50 @@ module.exports = router;
 
 /**
  * @swagger
- * /portal/auth/modify-email/:token:
- *   put:
- *     summary: Modify and verify email
+ * /portal/auth/update-email:
+ *   post:
+ *     summary: Trigger Update email
+ *     tags: [Portal Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldEmail:
+ *                 type: string
+ *                 format: email
+ *               newEmail:
+ *                 type: string
+ *                 format: email
+ *             example:
+ *               oldEmail: oldemail@haqqman.agency
+ *               newEmail: newemail@haqqman.agency
+ *     responses:
+ *       "204":
+ *         description: No content
+ *       "400":
+ *         $ref: '#/components/responses/BadRequest'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /portal/auth/update-email/{code}:
+ *   patch:
+ *     summary: Verify and confirm request to update email
  *     tags: [Portal Auth]
  *     parameters:
  *       - in: path
- *         name: token
+ *         name: code
  *         required: true
  *         schema:
  *           type: string
- *         description: The modify email token
+ *         description: The update email confirmation code
  *     requestBody:
  *       required: true
  *       content:
@@ -338,15 +372,11 @@ module.exports = router;
  *               - email
  *               - password
  *             properties:
- *               email:
+ *               newEmail:
  *                 type: string
  *                 format: email
- *               password:
- *                 type: string
- *                 format: password
  *             example:
- *               email: newemail@example.com
- *               password: userPassword
+ *               newEmail: newemail@haqqman.agency
  *     responses:
  *       "204":
  *         description: No content
@@ -355,6 +385,7 @@ module.exports = router;
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  */
+
 
 
 /**
@@ -493,3 +524,4 @@ module.exports = router;
  *               code: 401
  *               message: Access verification with OTP failed
  */
+
