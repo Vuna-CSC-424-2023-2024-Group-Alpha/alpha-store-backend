@@ -123,6 +123,63 @@ const updateOtpOption = async (req) => {
   }
 };
 
+/**
+ * Update password of portal user
+ */
+const updatePassword = async (userId, newPassword) => {
+  try {
+    // Update the user's password
+    await portalUserService.updatePortalUserById(userId, { password: newPassword });
+  } catch (error) {
+    // If an error occurs during the update, handle it appropriately
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+      // If the provided userId is invalid (not a valid ObjectId)
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid user ID');
+    } else if (error.name === 'ValidationError') {
+      // If the provided newPassword is invalid or doesn't meet validation criteria
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid password. Please provide a valid password.');
+    } else if (error.name === 'UserNotFoundError') {
+      // If the user with the given userId is not found in the database
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+    } else {
+      // For any other unexpected error, throw a generic error message
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred while updating the password.');
+    }
+  }
+};
+
+/**
+ * Update existing email for authenticated user
+ */
+const updateEmail = async (user, body) => {
+  const checkUser = await portalUserService.getPortalUserByEmail(body.oldEmail);
+  if (!checkUser) {
+    throw new ApiError(404, 'No user exists for this email address');
+  }
+
+  if (user.email !== body.oldEmail) {
+    throw new ApiError(400, 'Old Email does not match current email');
+  }
+
+  const code = await tokenService.generateUpdateEmailCode(user);
+
+  await emailService.PortalUserUpdateEmail({
+    to: body.newEmail,
+    firstName: user.firstName,
+    code,
+  });
+};
+
+const confirmUpdateEmail = async (code, newEmail) => {
+  const updateEmailTokenDoc = await tokenService.verifyUpdateEmailCode(code);
+  console.log(updateEmailTokenDoc);
+  const user = await portalUserService.getPortalUserById(updateEmailTokenDoc.user);
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid token!');
+  }
+  await portalUserService.updatePortalUserById(user.id, { email: newEmail });
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
@@ -130,5 +187,8 @@ module.exports = {
   setNewPassword,
   verifyEmail,
   verifyOTP,
+  updatePassword,
   updateOtpOption,
+  updateEmail,
+  confirmUpdateEmail,
 };

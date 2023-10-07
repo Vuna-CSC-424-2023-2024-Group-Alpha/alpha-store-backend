@@ -1,9 +1,10 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-
+const { App } = require('../models');
 const { portalAuthService, portalUserService, tokenService, emailService, appService } = require('../services');
 
 const createAccount = catchAsync(async (req, res) => {
+  req.body.app = await App.findOne({});
   const user = await portalUserService.createPortalUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
@@ -19,8 +20,8 @@ const login = catchAsync(async (req, res) => {
   const user = await portalAuthService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   const activeApp = await appService.getApp(user.app);
-  let useOtp = user.otpOption;
-  let appOtp = activeApp.portalOtpOption;
+  let useOtp = user?.otpOption;
+  let appOtp = activeApp?.portalOtpOption;
 
   if (useOtp || appOtp === 'required') {
     // send user OTP
@@ -30,8 +31,8 @@ const login = catchAsync(async (req, res) => {
       to: user.email,
       firstName: user.firstName,
       otp: accessOTP,
-      logoEmail: activeApp.branding.logoEmail,
-      portalUrl: activeApp.portalUrl,
+      logoEmail: activeApp?.branding?.logoEmail,
+      portalUrl: activeApp?.portalUrl ?? process.env.PORTAL_URL,
     });
   }
   res.send({ user, tokens });
@@ -74,6 +75,39 @@ const verifyOTP = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const updatePassword = catchAsync(async (req, res) => {
+  try {
+    const { id, email } = req.user;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    const user = await portalAuthService.loginUserWithEmailAndPassword(email, currentPassword);
+    if (!user) {
+      throw new ApiError(400, 'Incorrect password');
+    }
+    if (newPassword !== confirmNewPassword) {
+      throw new ApiError(400, 'Passwords are not the same.');
+    }
+    await portalAuthService.updatePassword(id, newPassword);
+    res.status(httpStatus.NO_CONTENT).send();
+  } catch (error) {
+    // Handle the error appropriately without re-throwing it
+    res
+      .status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR)
+      .send({ error: error.message || 'An unexpected error occurred.' });
+  }
+});
+
+// Trigger email update
+const updateEmail = catchAsync(async (req, res) => {
+  await portalAuthService.updateEmail(req.user, req.body);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
+// Verify and confirm request to update email
+const confirmUpdateEmail = catchAsync(async (req, res) => {
+  await portalAuthService.confirmUpdateEmail(req.params.code, req.body.newEmail);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 module.exports = {
   createAccount,
   updateOtpOption,
@@ -83,6 +117,9 @@ module.exports = {
   resetPassword,
   setNewPassword,
   resendVerificationEmail,
+  updatePassword,
   verifyEmail,
   verifyOTP,
+  updateEmail,
+  confirmUpdateEmail,
 };

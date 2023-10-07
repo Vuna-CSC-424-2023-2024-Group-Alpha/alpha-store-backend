@@ -6,6 +6,9 @@ const MAIL_FROM_DEFAULT = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FRO
 const MAIL_FROM_PORTAL = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_PORTAL}>`;
 const MAIL_FROM_CONSOLE = `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_CONSOLE}>`;
 
+const portalUrl = process.env.PORTAL_URL;
+const consoleUrl = process.env.CONSOLE_URL;
+
 // Sends a welcome email to new users upon registration.
 const PortalWelcome = async (payload) => {
   const { to, firstName, email } = payload;
@@ -125,6 +128,22 @@ const recoverConsoleAccessRequest = async (payload) => {
   });
 };
 
+// Sends email to existing user to update Email
+const PortalUserUpdateEmail = async (payload) => {
+  const { to, firstName, code } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 27993251, //TODO: Replace with the right TemplateId for "PortalUserUpdateEmail"
+    TemplateModel: {
+      firstName,
+      code,
+      portalUrl,
+    },
+  });
+}
+
 module.exports = {
   PortalWelcome,
   NewPortaltalUserVerificationCode,
@@ -133,4 +152,5 @@ module.exports = {
   VerifyConsoleUserAccessWithOTP,
   InviteConsoleUser,
   recoverConsoleAccessRequest,
+  PortalUserUpdateEmail,
 };
