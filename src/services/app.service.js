@@ -32,6 +32,10 @@ const getApp = async (id) => {
   return app;
 };
 
+const getAppBySlug = async (slug) => {
+  return await App.findOne({ slug });
+}
+
 const updatePortalOtpOption = async (req) => {
   try {
     const { id, portalOtpOption } = req.body;
@@ -52,5 +56,6 @@ module.exports = {
   // createApp,
   getAllApps,
   getApp,
+  getAppBySlug,
   updatePortalOtpOption,
 };

@@ -12,15 +12,11 @@ components:
           type: string
         lastName:
           type: string
-        role:
-          type: string
-          enum: [manager, collaborator]
       example:
         id: 5ebac534954b54139806c112
         email: fake@example.com
         firstName: John
         lastName: Doe
-        role: user
 
     Token:
       type: object

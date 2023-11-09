@@ -4,6 +4,7 @@ const tokenTypes = {
   RESET_PASSWORD: 'resetPassword',
   VERIFY_EMAIL: 'verifyEmail',
   VERIFY_OTP: 'verifyOTP',
+  UPDATE_EMAIL: 'updateEmail',
   INVITE_CONSOLE_USER: 'inviteConsoleUser',
 };
 

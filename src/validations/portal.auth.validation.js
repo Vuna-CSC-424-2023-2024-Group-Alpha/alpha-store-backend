@@ -41,6 +41,7 @@ const setNewPassword = {
   }),
   body: Joi.object().keys({
     password: Joi.string().required().custom(password),
+    confirmNewPassword: Joi.string().required().custom(password),
   }),
 };
 
@@ -55,6 +56,22 @@ const verifyOTP = {
   }),
 };
 
+const updateEmail = {
+  body: Joi.object().keys({
+    oldEmail: Joi.string().email().required(),
+    newEmail: Joi.string().email().required(),
+  }),
+};
+
+const confirmUpdateEmail = {
+  params: Joi.object().keys({
+    code: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    newEmail: Joi.string().email().required(),
+  }),
+};
+
 module.exports = {
   createAccount,
   login,
@@ -62,6 +79,8 @@ module.exports = {
   refreshTokens,
   resetPassword,
   setNewPassword,
+  updateEmail,
+  confirmUpdateEmail,
   verifyEmail,
   verifyOTP,
 };
