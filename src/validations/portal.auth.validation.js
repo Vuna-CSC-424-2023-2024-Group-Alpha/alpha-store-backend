@@ -83,4 +83,6 @@ module.exports = {
   confirmUpdateEmail,
   verifyEmail,
   verifyOTP,
+  updateEmail,
+  confirmUpdateEmail,
 };

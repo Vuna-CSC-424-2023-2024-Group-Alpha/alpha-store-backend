@@ -247,7 +247,7 @@ module.exports = router;
  *     tags: [Portal Auth]
  *     parameters:
  *       - in: path
- *         name: token
+ *         name: code
  *         required: true
  *         schema:
  *           type: string
@@ -481,3 +481,4 @@ module.exports = router;
  *               code: 401
  *               message: Access verification with OTP failed
  */
+
