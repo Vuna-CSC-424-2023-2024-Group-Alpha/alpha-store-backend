@@ -13,42 +13,60 @@ const consoleUrl = process.env.CONSOLE_URL;
 const PortalWelcome = async (payload) => {
   const { to, firstName, email } = payload;
 
-  // const email = 'webmanager@haqqman.agency';
   client.sendEmailWithTemplate({
     From: MAIL_FROM_PORTAL,
     To: to,
-    TemplateId: 25815659, // TODO: Replace with the right TemplateId for "ExpressBoilerplateWelcome"
+    TemplateId: 25815659, // TODO: Replace with the right TemplateId for "PortalWelcome"
     TemplateModel: {
       email,
       firstName,
+      portalUrl,
     },
   });
 };
 
 // Sends a verification code to new users for email verification.
-const NewPortaltalUserVerificationCode = async (payload) => {
-  const { firstName, email, code } = payload;
+const PortalUserEmailVerificationCode = async (payload) => {
+  const { to, firstName, email, vCode } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_PORTAL,
     To: to,
-    TemplateId: 25815659, // Postmark: Email Template for "NewUserVerificationCode"
+    TemplateId: 25815659, // Postmark: Email Template for "PortalUserEmailVerificationCode"
     TemplateModel: {
       email,
       firstName,
-      code,
+      vCode,
+      portalUrl,
+    },
+  });
+};
+
+// Sends email to existing user to reset password
+const PortalUserResetPassword = async (payload) => {
+  const { to, email, firstName, token } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 25815659, // Postmark: Email Template for "PortalUserResetPassword"
+    TemplateModel: {
+      email,
+      firstName,
+      token,
+      portalUrl,
     },
   });
 };
 
 // Sends a notification email to users when their password is successfully reset.
-const PasswordResetSuccessful = async (payload) => {
-  const { email, firstName, logoEmail, portalUrl } = payload;
+const PortalUserPasswordUpdateAlert = async (payload) => {
+  const { email, firstName, logoEmail } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_PORTAL,
     To: to,
-    TemplateId: 25815659, // Postmark: Email Template for "PasswordResetSuccessful"
+    TemplateId: 32398839,
     TemplateModel: {
       email,
       firstName,
@@ -58,8 +76,24 @@ const PasswordResetSuccessful = async (payload) => {
   });
 };
 
+// Sends email to existing user to update Email
+const PortalUserUpdateEmail = async (payload) => {
+  const { to, firstName, code } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 33381234,
+    TemplateModel: {
+      firstName,
+      code,
+      portalUrl,
+    },
+  });
+};
+
 // Sends an OTP to grant access to an existing portal user.
-const VerifyPortalUserAccessWithOTP = async (payload) => {
+const PortalUserVerifyAccessWithOTP = async (payload) => {
   const { to, firstName, otp } = payload;
 
   client.sendEmailWithTemplate({
@@ -70,9 +104,11 @@ const VerifyPortalUserAccessWithOTP = async (payload) => {
       to,
       firstName,
       otp,
+      portalUrl,
     },
   });
 };
+
 
 // Sends an OTP to grant access to an existing console user.
 const VerifyConsoleUserAccessWithOTP = async (payload) => {
@@ -146,9 +182,11 @@ const PortalUserUpdateEmail = async (payload) => {
 
 module.exports = {
   PortalWelcome,
-  NewPortaltalUserVerificationCode,
-  PasswordResetSuccessful,
-  VerifyPortalUserAccessWithOTP,
+  PortalUserEmailVerificationCode,
+  PortalUserResetPassword,
+  PortalUserPasswordUpdateAlert,
+  PortalUserUpdateEmail,
+  PortalUserVerifyAccessWithOTP,
   VerifyConsoleUserAccessWithOTP,
   InviteConsoleUser,
   recoverConsoleAccessRequest,

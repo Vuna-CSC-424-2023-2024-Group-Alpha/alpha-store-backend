@@ -41,6 +41,7 @@ const setNewPassword = {
   }),
   body: Joi.object().keys({
     password: Joi.string().required().custom(password),
+    confirmNewPassword: Joi.string().required().custom(password),
   }),
 };
 
@@ -78,6 +79,8 @@ module.exports = {
   refreshTokens,
   resetPassword,
   setNewPassword,
+  updateEmail,
+  confirmUpdateEmail,
   verifyEmail,
   verifyOTP,
   updateEmail,

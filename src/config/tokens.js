@@ -5,6 +5,7 @@ const tokenTypes = {
   VERIFY_EMAIL: 'verifyEmail',
   UPDATE_EMAIL: 'updateEmail',
   VERIFY_OTP: 'verifyOTP',
+  UPDATE_EMAIL: 'updateEmail',
   INVITE_CONSOLE_USER: 'inviteConsoleUser',
 };
 

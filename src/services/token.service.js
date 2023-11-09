@@ -85,10 +85,9 @@ const verifyCode = async (code, userId) => {
   if (hasExpired(tokenDoc)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
   }
-  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
+  await Token.deleteOne({ user: userId, type: tokenTypes.VERIFY_EMAIL });
   return tokenDoc;
 };
-
 /**
  * Verify update email code and return token doc (or throw an error if it is not valid)
  * @param {string} code
@@ -134,12 +133,23 @@ const generateAuthTokens = async (user) => {
 /**
  * Generate reset password token
  * @param {string} email
+ * @param { string } userModel
  * @returns {Promise<string>}
  */
-const generateResetPasswordToken = async (email) => {
-  const user = await portalUserService.getPortalUserByEmail(email);
+const generateResetPasswordToken = async (email, userModel) => {
+  if (!userModel) {
+    userModel = 'PortalUser';
+  }
+
+  let user;
+  if (userModel == 'PortalUser') {
+    user = await portalUserService.getPortalUserByEmail(email);
+  } else {
+    user = await consoleUserService.getConsoleUserByWorkmail(workmail);
+  }
+
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'No user found with this email');
+    throw new ApiError(httpStatus.NOT_FOUND, 'No user found with this email!');
   }
   const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
   const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
@@ -170,6 +180,20 @@ const generateVerifyEmailCode = async (user) => {
 const hasOTPExpired = (otpDoc) => {
   const expiresIn = moment().diff(otpDoc.createdAt, 'minutes');
   return expiresIn >= config.jwt.verifyOTPExpirationMinutes;
+};
+
+/**
+ * Generate update email code
+ * @param {User} user
+ * @returns {Promise<string>}
+ */
+const generateUpdateEmailCode = async (user) => {
+  // delete previous update email code to invalidate it
+  await Token.deleteOne({ user: user.id, type: tokenTypes.UPDATE_EMAIL });
+  const code = _.random(100000, 999999);
+  const expires = moment().add(config.jwt.updateEmailExpirationMinutes, 'minutes');
+  await saveToken(code, user.id, expires, tokenTypes.UPDATE_EMAIL);
+  return code;
 };
 
 // Method to generate  OTP
@@ -203,6 +227,24 @@ const verifyAccessOTP = async (userOTP, userId) => {
   await Token.deleteOne({ _id: otpDoc.id });
   return otpDoc;
 };
+
+/**
+ * Verify update email code and return token doc (or throw an error if it is not valid)
+ * @param {string} code
+ * @returns {Promise<Token>}
+ */
+const verifyUpdateEmailCode = async (code) => {
+  const tokenDoc = await Token.findOne({ token: code, type: tokenTypes.UPDATE_EMAIL });
+  if (!tokenDoc) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
+  }
+  if (hasExpired(tokenDoc)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
+  }
+  await Token.deleteOne({ token: code, type: tokenTypes.UPDATE_EMAIL });
+  return tokenDoc;
+};
+
 
 // Start of Console User Token
 /**
@@ -252,7 +294,9 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailCode,
+  generateUpdateEmailCode,
   generateUserAccessOTP,
+  verifyUpdateEmailCode,
   verifyAccessOTP,
   generateInviteConsoleUserToken,
   generateConsoleUserPayloadFromToken,
