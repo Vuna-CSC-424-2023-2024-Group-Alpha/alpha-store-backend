@@ -117,7 +117,7 @@ const resendLoginOTP = catchAsync(async (req, res) => {
   // send user OTP
   const OTP = await tokenService.generateUserAccessOTP(user);
 
-  await emailService.VerifyPortalUserAccessWithOTP({
+  await emailService.PortalUserVerifyAccessWithOTP({
     to: user.email,
     firstName: user.firstName,
     otp: OTP,
@@ -150,6 +150,11 @@ const verifyEmail = catchAsync(async (req, res) => {
         res
           .status(httpStatus.BAD_REQUEST)
           .send({ error: 'TOKEN_EXPIRED', message: 'The verification code has expired. Please request a new code.' });
+      } else if (error.statusCode === httpStatus.NOT_FOUND && error.message === 'Token not found') {
+        // Token with provided vCode not found
+        res
+          .status(httpStatus.BAD_REQUEST)
+          .send({ error: 'TOKEN_NOT_FOUND', message: 'No token found associated with the verification code.' });
       } else if (error.statusCode === httpStatus.NOT_FOUND && error.message === 'User not found') {
         // User not found associated with the token
         res

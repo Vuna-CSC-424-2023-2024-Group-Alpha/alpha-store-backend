@@ -80,7 +80,7 @@ const verifyToken = async (token, type) => {
 const verifyCode = async (code, userId) => {
   const tokenDoc = await Token.findOne({ token: code, type: tokenTypes.VERIFY_EMAIL, user: userId, blacklisted: false });
   if (!tokenDoc) {
-    throw new Error('Token not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
   }
   if (hasExpired(tokenDoc)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
