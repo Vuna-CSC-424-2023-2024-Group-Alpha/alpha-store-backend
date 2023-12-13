@@ -88,6 +88,7 @@ const verifyCode = async (code, userId) => {
   await Token.deleteOne({ user: userId, type: tokenTypes.VERIFY_EMAIL });
   return tokenDoc;
 };
+
 /**
  * Verify update email code and return token doc (or throw an error if it is not valid)
  * @param {string} code
@@ -228,24 +229,6 @@ const verifyAccessOTP = async (userOTP, userId) => {
   return otpDoc;
 };
 
-/**
- * Verify update email code and return token doc (or throw an error if it is not valid)
- * @param {string} code
- * @returns {Promise<Token>}
- */
-const verifyUpdateEmailCode = async (code) => {
-  const tokenDoc = await Token.findOne({ token: code, type: tokenTypes.UPDATE_EMAIL });
-  if (!tokenDoc) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
-  }
-  if (hasExpired(tokenDoc)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
-  }
-  await Token.deleteOne({ token: code, type: tokenTypes.UPDATE_EMAIL });
-  return tokenDoc;
-};
-
-
 // Start of Console User Token
 /**
  * Generate invite console user token
@@ -271,20 +254,6 @@ const generateConsoleUserPayloadFromToken = async (token) => {
   return jwt.verify(token, config.jwt.secret);
 };
 
-/**
- * Generate update email code
- * @param {User} user
- * @returns {Promise<string>}
- */
-const generateUpdateEmailCode = async (user) => {
-  // delete previous update email code to invalidate it
-  await Token.deleteOne({ user: user.id, type: tokenTypes.UPDATE_EMAIL });
-  const code = _.random(100000, 999999);
-  const expires = moment().add(config.jwt.updateEmailExpirationMinutes, 'minutes');
-  await saveToken(code, user.id, expires, tokenTypes.UPDATE_EMAIL);
-  return code;
-};
-
 module.exports = {
   generateToken,
   saveToken,
@@ -296,9 +265,7 @@ module.exports = {
   generateVerifyEmailCode,
   generateUpdateEmailCode,
   generateUserAccessOTP,
-  verifyUpdateEmailCode,
   verifyAccessOTP,
   generateInviteConsoleUserToken,
   generateConsoleUserPayloadFromToken,
-  generateUpdateEmailCode,
 };

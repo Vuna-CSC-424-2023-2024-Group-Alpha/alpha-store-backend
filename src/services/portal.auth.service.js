@@ -252,6 +252,4 @@ module.exports = {
   updateEmail,
   confirmUpdateEmail,
   updateOtpOption,
-  updateEmail,
-  confirmUpdateEmail,
 };
