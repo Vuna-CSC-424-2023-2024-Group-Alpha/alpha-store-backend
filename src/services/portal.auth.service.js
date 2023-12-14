@@ -62,8 +62,8 @@ const resetPassword = async (payload) => {
     }
 
     const resetPasswordToken = await tokenService.generateResetPasswordToken(payload.email);
-    // Get the agency app using the slug 'agency-app'
-    const agencyApp = await appService.getAppBySlug('example1-app-app');
+    // Get the agency app using the slug 'example-app'
+    const agencyApp = await appService.getAppBySlug('example-app');
     if (!agencyApp) {
       throw new ApiError(httpStatus.NOT_FOUND, 'App does not exist for this user');
     }
