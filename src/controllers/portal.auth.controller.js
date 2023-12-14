@@ -111,6 +111,21 @@ const resendVerificationEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const resendLoginOTP = catchAsync(async (req, res) => {
+  const user = req.user;
+
+  // send user OTP
+  const OTP = await tokenService.generateUserAccessOTP(user);
+
+  await emailService.PortalUserVerifyAccessWithOTP({
+    to: user.email,
+    firstName: user.firstName,
+    otp: OTP,
+  });
+
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 /**
  * Verify email after creating new account
  * @param {string} vCode - The verification code received by the user's email.
@@ -135,6 +150,11 @@ const verifyEmail = catchAsync(async (req, res) => {
         res
           .status(httpStatus.BAD_REQUEST)
           .send({ error: 'TOKEN_EXPIRED', message: 'The verification code has expired. Please request a new code.' });
+      } else if (error.statusCode === httpStatus.NOT_FOUND && error.message === 'Token not found') {
+        // Token with provided vCode not found
+        res
+          .status(httpStatus.BAD_REQUEST)
+          .send({ error: 'TOKEN_NOT_FOUND', message: 'No token found associated with the verification code.' });
       } else if (error.statusCode === httpStatus.NOT_FOUND && error.message === 'User not found') {
         // User not found associated with the token
         res
@@ -182,18 +202,6 @@ const updatePassword = catchAsync(async (req, res) => {
   }
 });
 
-// Trigger email update
-const updateEmail = catchAsync(async (req, res) => {
-  await portalAuthService.updateEmail(req.user, req.body);
-  res.status(httpStatus.NO_CONTENT).send();
-});
-
-// Verify and confirm request to update email
-const confirmUpdateEmail = catchAsync(async (req, res) => {
-  await portalAuthService.confirmUpdateEmail(req.params.code, req.body.newEmail);
-  res.status(httpStatus.NO_CONTENT).send();
-});
-
 module.exports = {
   createAccount,
   updateOtpOption,
@@ -208,6 +216,5 @@ module.exports = {
   updatePassword,
   verifyEmail,
   verifyOTP,
-  updateEmail,
-  confirmUpdateEmail,
+  resendLoginOTP,
 };

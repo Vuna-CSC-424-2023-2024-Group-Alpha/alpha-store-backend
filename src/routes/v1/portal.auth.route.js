@@ -18,6 +18,7 @@ router.patch('/update-email/:code', validate(portalAuthValidation.confirmUpdateE
 router.post('/resend-verification-email', auth(), portalAuthController.resendVerificationEmail);
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
+router.post('/resend-otp', auth(), portalAuthController.resendLoginOTP);
 
 module.exports = router;
 
@@ -393,6 +394,24 @@ module.exports = router;
 
 /**
  * @swagger
+ * /portal/auth/resend-otp:
+ *   post:
+ *     summary: Resend login OTP
+ *     description: Resend login OTP
+ *     tags: [Portal Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "204":
+ *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
  * /portal/auth/verify-email:
  *   post:
  *     summary: Verify email using verification code
@@ -458,7 +477,7 @@ module.exports = router;
  *               otp:
  *                 type: string
  *             example:
- *               otp: 392920
+ *               otp: "392920"
  *     responses:
  *       "204":
  *         description: No content

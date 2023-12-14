@@ -164,22 +164,6 @@ const recoverConsoleAccessRequest = async (payload) => {
   });
 };
 
-// Sends email to existing user to update Email
-const PortalUserUpdateEmail = async (payload) => {
-  const { to, firstName, code } = payload;
-
-  client.sendEmailWithTemplate({
-    From: MAIL_FROM_PORTAL,
-    To: to,
-    TemplateId: 27993251, //TODO: Replace with the right TemplateId for "PortalUserUpdateEmail"
-    TemplateModel: {
-      firstName,
-      code,
-      portalUrl,
-    },
-  });
-}
-
 module.exports = {
   PortalWelcome,
   PortalUserEmailVerificationCode,
@@ -190,5 +174,4 @@ module.exports = {
   VerifyConsoleUserAccessWithOTP,
   InviteConsoleUser,
   recoverConsoleAccessRequest,
-  PortalUserUpdateEmail,
 };

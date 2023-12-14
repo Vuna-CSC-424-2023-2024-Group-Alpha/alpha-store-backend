@@ -62,8 +62,11 @@ const resetPassword = async (payload) => {
     }
 
     const resetPasswordToken = await tokenService.generateResetPasswordToken(payload.email);
-    // Get the agency app using the slug 'agency-app'
-    const agencyApp = await appService.getAppBySlug('agency-app');
+    // Get the agency app using the slug 'example-app'
+    const agencyApp = await appService.getAppBySlug('example-app');
+    if (!agencyApp) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'App does not exist for this user');
+    }
 
     // send reset password email
     await emailService.PortalUserResetPassword({
@@ -75,6 +78,7 @@ const resetPassword = async (payload) => {
 
     return { message: 'Password reset email sent successfully!' };
   } catch (error) {
+      console.log(error);
     if (error instanceof ApiError) {
       throw error; // Forward the ApiError with the appropriate status code and message
     } else {
@@ -148,6 +152,11 @@ const verifyEmail = async (vCode, userId) => {
       // Token expired error, but email verification was successful
       return { message: 'Email successfully verified' };
     }
+
+    if (error instanceof ApiError) {
+      // Token expired error, but email verification was successful
+      throw error;
+    } 
 
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
   }
@@ -252,6 +261,4 @@ module.exports = {
   updateEmail,
   confirmUpdateEmail,
   updateOtpOption,
-  updateEmail,
-  confirmUpdateEmail,
 };
