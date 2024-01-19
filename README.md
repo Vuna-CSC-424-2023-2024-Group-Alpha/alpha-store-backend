@@ -413,7 +413,6 @@ Contributions are more than welcome! Please check out the [contributing guide](C
 ## Contributors
 
 - [Abdulhaqq Sule](https://linqman.com/suleinsights)
-- [Michael Umeokoli](https://linqman.com/mikey247)
 - [Abubakar Usman](https://linqman.com/namikaze)
 
 ## License
