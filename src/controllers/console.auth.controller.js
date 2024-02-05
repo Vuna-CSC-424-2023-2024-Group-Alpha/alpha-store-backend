@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 
-const { consoleAuthService, tokenService, emailService, appService } = require('../services');
+const { consoleAuthService, consoleUserService, tokenService, emailService, appService } = require('../services');
 
 const login = catchAsync(async (req, res) => {
   const { workmail, password } = req.body;
