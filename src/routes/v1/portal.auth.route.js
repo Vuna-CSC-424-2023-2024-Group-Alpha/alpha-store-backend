@@ -15,8 +15,8 @@ router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), por
 router.post('/resend-verification-email', auth(), portalAuthController.resendVerificationEmail);
 router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
 router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
-router.put('/update-password', auth(), portalAuthController.updatePassword);
-router.put('/modify-email/:token', validate(portalAuthValidation.modifyEmail), portalAuthController.modifyEmail);
+router.post('/update-email', auth(), validate(portalAuthValidation.updateEmail), portalAuthController.updateEmail);
+router.patch('/update-email/:code', validate(portalAuthValidation.confirmUpdateEmail), portalAuthController.confirmUpdateEmail);
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
 router.patch('/update-OTP-option', auth(), portalAuthController.updateOtpOption);
 
@@ -321,17 +321,17 @@ module.exports = router;
 
 /**
  * @swagger
- * /portal/auth/modify-email/:token:
+ * /portal/auth/set-new-password/{token}:
  *   put:
- *     summary: Modify and verify email
+ *     summary: Set New Password
  *     tags: [Portal Auth]
  *     parameters:
  *       - in: path
- *         name: token
+ *         name: code
  *         required: true
  *         schema:
  *           type: string
- *         description: The modify email token
+ *         description: Use token to set new password after portal user request to reset password.
  *     requestBody:
  *       required: true
  *       content:
@@ -339,18 +339,61 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - email
  *               - password
+ *               - confirmNewPassword
  *             properties:
- *               email:
- *                 type: string
- *                 format: email
  *               password:
  *                 type: string
- *                 format: password
+ *                 format: P@ssword!
+ *                 minLength: 8
+ *                 description: At least one number and one letter
+ *               confirmNewPassword:
+ *                 type: string
+ *                 format: P@ssword!
+ *                 minLength: 8
+ *                 description: At least one number and one letter
  *             example:
- *               email: newemail@example.com
- *               password: userPassword
+ *               password: password1
+ *               confirmNewPassword: password1
+ *     responses:
+ *       "200":
+ *         description: Password reset successful
+ *       "401":
+ *         description: Password reset failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               code: 401
+ *               message: Password reset failed
+ */
+
+
+/**
+ * @swagger
+ * /portal/auth/update-email:
+ *   post:
+ *     summary: Trigger Update email
+ *     tags: [Portal Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldEmail:
+ *                 type: string
+ *                 format: email
+ *               newEmail:
+ *                 type: string
+ *                 format: email
+ *             example:
+ *               oldEmail: oldemail@haqqman.agency
+ *               newEmail: newemail@haqqman.agency
  *     responses:
  *       "204":
  *         description: No content
@@ -360,97 +403,38 @@ module.exports = router;
  *         $ref: '#/components/responses/Unauthorized'
  */
 
-
 /**
  * @swagger
- * /portal/auth/set-new-password/:token:
- *   post:
- *     summary: Set New Password
+ * /portal/auth/update-email/{code}:
+ *   patch:
+ *     summary: Verify and confirm request to update email
  *     tags: [Portal Auth]
  *     parameters:
- *       - in: query
- *         name: token
+ *       - in: path
+ *         name: code
  *         required: true
  *         schema:
  *           type: string
- *         description: The reset password token
+ *         description: The update email confirmation code
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - password
  *             properties:
- *               password:
+ *               newEmail:
  *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
+ *                 format: email
  *             example:
- *               password: password1
+ *               newEmail: newemail@haqqman.agency
  *     responses:
  *       "204":
  *         description: No content
+ *       "400":
+ *         $ref: '#/components/responses/BadRequest'
  *       "401":
- *         description: Password reset failed
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               code: 401
- *               message: Password reset failed
- */
-
-/**
- * @swagger
- * /portal/auth/update-password/:
- *   put:
- *     summary: Update Password
- *     description: Update password for a logged in portal user
- *     tags: [Portal Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - password
- *             properties:
- *               currentPassword:
- *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
- *               newPassword:
- *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
- *               confirmNewPassword:
- *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
- *             example:
- *               currentPassword: CurrentPassword!
- *               newPassword: NewPassword1
- *               confirmPassword: NewPassword1
- *     responses:
- *       "204":
- *         description: No content
- *       "401":
- *         description: Password reset failed
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               code: 401
- *               message: Password reset failed
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**

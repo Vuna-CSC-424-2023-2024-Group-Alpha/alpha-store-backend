@@ -49,7 +49,7 @@ const updateConsoleUserStatus = {
   }),
 };
 
-const inviteConsoleUser = {
+const consoleUserInvite  = {
   body: Joi.object().keys({
     workmail: Joi.string().required().email(),
     firstName: Joi.string().required(),
@@ -73,6 +73,6 @@ module.exports = {
   updateConsoleUser,
   updateConsoleUserStatus,
   getConsoleUser,
-  inviteConsoleUser,
+  consoleUserInvite ,
   acceptInvite,
 };

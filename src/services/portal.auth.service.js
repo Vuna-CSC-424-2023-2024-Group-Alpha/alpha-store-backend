@@ -53,7 +53,7 @@ const refreshAuth = async (refreshToken) => {
 };
 
 /**
- * Reset password
+ * Set new password after request to reset password
  * @param {string} setNewPassword
  * @param {string} newPassword
  * @returns {Promise}
@@ -65,10 +65,13 @@ const setNewPassword = async (resetPasswordToken, newPassword) => {
     if (!user) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid token!');
     }
-    await portalUserService.updatePortalUserById(user.id, { password: newPassword });
+    await portalUserService.updatePortalUserById(user.id, { 'security.password': newPassword });
     await Token.deleteMany({ user: user.id, type: tokenTypes.RESET_PASSWORD });
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed!');
   }
 };
 
@@ -95,7 +98,7 @@ const verifyEmail = async (verifyEmailCode, userId) => {
 const verifyOTP = async (otp, userId) => {
   try {
     const otpDoc = await tokenService.verifyAccessOTP(otp, userId);
-    const user = await consoleUserService.getConsoleUserById(otpDoc.user);
+    const user = await portalUserService.getPortalUserById(otpDoc.user);
     if (!user) {
       throw new ApiError(httpStatus.NOT_FOUND, 'OTP does not exist');
     }
@@ -123,12 +126,73 @@ const updateOtpOption = async (req) => {
   }
 };
 
+const resetPassword = async (payload) => {
+  try {
+    const user = await portalUserService.getPortalUserByEmail(payload.email);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'No user exists for this email');
+    }
+
+    const resetPasswordToken = await tokenService.generateResetPasswordToken(payload.email);
+    // send reset password email
+    await emailService.PortalUserResetPassword({
+      to: payload.email,
+      token: resetPasswordToken,
+      firstName: user.firstName,
+    });
+
+    return { message: 'Password reset email sent successfully!' };
+  } catch (error) {
+    console.log(error);
+    if (error instanceof ApiError) {
+      throw error; // Forward the ApiError with the appropriate status code and message
+    } else {
+      // For unexpected errors, throw a generic error message
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred during password reset');
+    }
+  }
+};
+
+/**
+ * Update existing email for authenticated user
+ */
+const updateEmail = async (user, body) => {
+  const checkUser = await portalUserService.getPortalUserByEmail(body.oldEmail);
+  if (!checkUser) {
+    throw new ApiError(404, 'No user exists for this email address');
+  }
+
+  if (user.email !== body.oldEmail) {
+    throw new ApiError(400, 'Old Email does not match current email');
+  }
+
+  const code = await tokenService.generateUpdateEmailCode(user);
+
+  await emailService.PortalUserUpdateEmail({
+    to: body.newEmail,
+    firstName: user.firstName,
+    code,
+  });
+};
+
+const confirmUpdateEmail = async (code, newEmail) => {
+  const updateEmailTokenDoc = await tokenService.verifyUpdateEmailCode(code);
+  const user = await portalUserService.getPortalUserById(updateEmailTokenDoc.user);
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid token!');
+  }
+  await portalUserService.updatePortalUserById(user.id, { email: newEmail });
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
+  resetPassword,
   setNewPassword,
   verifyEmail,
   verifyOTP,
   updateOtpOption,
+  updateEmail,
+  confirmUpdateEmail,
 };

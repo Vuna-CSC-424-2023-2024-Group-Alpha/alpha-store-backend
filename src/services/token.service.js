@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const shortid = require('shortid');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const portalUserService = require('./portal.user.service');
+const consoleUserService = require('./console.user.service');
 const { Token } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
@@ -90,6 +92,24 @@ const verifyCode = async (code, userId) => {
 };
 
 /**
+ * Verify update email code and return token doc (or throw an error if it is not valid)
+ * @param {string} code
+ * @returns {Promise<Token>}
+ */
+const verifyUpdateEmailCode = async (code) => {
+  const tokenDoc = await Token.findOne({ token: code, type: tokenTypes.UPDATE_EMAIL });
+  if (!tokenDoc) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
+  }
+  if (hasExpired(tokenDoc)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
+  }
+  await Token.deleteOne({ token: code, type: tokenTypes.UPDATE_EMAIL });
+  return tokenDoc;
+};
+
+
+/**
  * Generate auth tokens
  * @param {User} user
  * @returns {Promise<Object>}
@@ -116,18 +136,45 @@ const generateAuthTokens = async (user) => {
 /**
  * Generate reset password token
  * @param {string} email
+ * @param { string } userModel
  * @returns {Promise<string>}
  */
-const generateResetPasswordToken = async (email) => {
-  const user = await portalUserService.getPortalUserByEmail(email);
+const generateResetPasswordToken = async (email, userModel) => {
+  if (!userModel) {
+    userModel = 'PortalUser';
+  }
+  let user;
+  if (userModel == 'PortalUser') {
+    user = await portalUserService.getPortalUserByEmail(email);
+  } else {
+    user = await consoleUserService.getConsoleUserByWorkmail(email);
+  }
+
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'No user found with this email');
+    throw new ApiError(httpStatus.NOT_FOUND, 'No user found with this email!');
   }
   const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
   const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
   await saveToken(resetPasswordToken, user.id, expires, tokenTypes.RESET_PASSWORD);
   return resetPasswordToken;
 };
+
+/**
+ * Generate invite console user token
+ * @param {object} payload (contains role, firstName, lastName, email)
+ * @returns {Promise<string>}
+ */
+const generateConsoleUserInviteToken = async (payload) => {
+  const JWTPayload = {
+    ...payload,
+    iat: moment().unix(),
+    exp: moment().add(72, 'hours').unix(),
+    type: tokenTypes.INVITE_CONSOLE_USER,
+    consoleUserId: shortid.generate(),
+  };
+  return jwt.sign(JWTPayload, config.jwt.secret);
+};
+
 
 /**
  * Generate verify email code
@@ -170,13 +217,27 @@ const generateUserAccessOTP = async (user) => {
 };
 
 /**
+ * Generate update email code
+ * @param {User} user
+ * @returns {Promise<string>}
+ */
+const generateUpdateEmailCode = async (user) => {
+  // delete previous update email code to invalidate it
+  await Token.deleteOne({ user: user.id, type: tokenTypes.UPDATE_EMAIL });
+  const code = _.random(100000, 999999);
+  const expires = moment().add(config.jwt.updateEmailExpirationMinutes, 'minutes');
+  await saveToken(code, user.id, expires, tokenTypes.UPDATE_EMAIL);
+  return code;
+};
+
+/**
  * Verify OTP and return OTP doc (or throw an error if it is not valid)
  * @param {string} userOTP
  * @param {string} type
  * @returns {Promise<Token>}
  */
 const verifyAccessOTP = async (userOTP, userId) => {
-  const otpDoc = await Token.findOne({ otp: userOTP, type: tokenTypes.VERIFY_OTP, user: userId, blacklisted: false });
+  const otpDoc = await Token.findOne({ token: userOTP, type: tokenTypes.VERIFY_OTP, user: userId, blacklisted: false });
   if (!otpDoc) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OTP not found');
   }
@@ -216,11 +277,14 @@ module.exports = {
   saveToken,
   verifyToken,
   verifyCode,
+  verifyUpdateEmailCode,
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailCode,
   generateUserAccessOTP,
+  generateUpdateEmailCode,
   verifyAccessOTP,
   generateInviteConsoleUserToken,
   generateConsoleUserPayloadFromToken,
+  generateConsoleUserInviteToken,
 };

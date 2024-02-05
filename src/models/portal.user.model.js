@@ -41,6 +41,10 @@ const portalUserSchema = mongoose.Schema(
       private: true, // used by the toJSON plugin
     },
 
+    dateOfBirth: {
+      type: Date,
+    },
+
     otpOption: {
       type: Boolean,
       default: true,
@@ -54,6 +58,12 @@ const portalUserSchema = mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+
+    status: {
+      type: String,
+      default: 'active',
+      enum: ['active', 'inactive'],
     },
 
     app: {

@@ -2,7 +2,8 @@ const { appService } = require('../services');
 const catchAsync = require('../utils/catchAsync');
 
 const getApp = catchAsync(async (req, res) => {
-  const app = await appService.getApp();
+  const { id } = req.params;
+  const app = await appService.getApp(id);
   res.json({ app });
 });
 

@@ -8,10 +8,14 @@ const login = catchAsync(async (req, res) => {
   const user = await consoleAuthService.loginConsoleUserWithWorkmailAndPassword(workmail, password);
   const tokens = await tokenService.generateAuthTokens(user);
   const otp = await tokenService.generateUserAccessOTP(user);
-  const activeApp = await appService.getApp(user.activeApp);
-  console.log(user);
+  let activeApp = await appService.getApp(user.activeApp);
+  if (!activeApp) {
+    activeApp = await appService.getAppBySlug('express-boilerplate-app');
+    await consoleUserService.updateConsoleUser(user._id, { activeApp: activeApp._id, $push: { apps: activeApp._id } });
+  }
+
   // send otp to console user workmail
-  await emailService.VerifyConsoleUserAccessWithOTP({
+  await emailService.ConsoleVerifyUserAccessWithOTP({
     to: user.workmail,
     firstName: user.firstName,
     appName: activeApp.name,
@@ -30,8 +34,17 @@ const logout = catchAsync(async (req, res) => {
 
 const resetPassword = catchAsync(async (req, res) => {
   const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.workmail, 'Console_User');
-  // TODO: Implement sendResetPasswordEmail
-  // await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  const user = await consoleUserService.getConsoleUserByWorkmail(req.body.workmail);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No console user exists for this email');
+  }
+  // send reset password email
+  await emailService.ConsoleUserResetPassword({
+    to: user.workmail,
+    token: resetPasswordToken,
+    firstName: user.firstName,
+  });
+
   res.status(httpStatus.NO_CONTENT).send();
 });
 

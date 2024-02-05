@@ -17,7 +17,7 @@ const getConsoleUser = catchAsync(async (req, res) => {
 });
 
 const updateConsoleUser = catchAsync(async (req, res) => {
-  await consoleUserService.updateConsoleUser(req.params.consoleUserId, req.body);
+  const user = await consoleUserService.updateConsoleUser(req.params.consoleUserId, req.body)
   res.send(user);
 });
 
@@ -26,25 +26,24 @@ const updateConsoleUserStatus = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const inviteConsoleUser = catchAsync(async (req, res) => {
+const consoleUserInvite = catchAsync(async (req, res) => {
   // check if user with workmail already exists
+  const inviter = req.user;
   const user = await consoleUserService.getConsoleUserByWorkmail(req.body.workmail);
   if (user) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The workmail provided already exists!');
   }
 
-  const { workmail, firstName } = req.body;
-  const token = await tokenService.generateInviteConsoleUserToken(req.body);
-  // get active hostel from currently logged in user
-  const activeApp = await appService.getApp(req.user.activeApp);
-  await emailService.InviteConsoleUser({
+  const { workmail, firstName, lastName, role } = req.body;
+  const token = await tokenService.generateConsoleUserInviteToken(req.body);
+  const { consoleUserId: consoleId } = await tokenService.generateConsoleUserPayloadFromToken(token);
+  await consoleUserService.createConsoleUser({ ...req.body, status: 'inactive' });
+  await emailService.ConsoleUserInvite({
     token,
+    consoleId,
     firstName,
     to: workmail,
-    appName: activeApp.name,
-    consoleUrl: activeApp.consoleUrl,
-    portalUrl: activeApp.portalUrl,
-    logoEmail: activeApp.branding.logoEmail,
+    inviterFullName: `${inviter.firstName} ${inviter.lastName}`,
   });
 
   res.status(httpStatus.NO_CONTENT).send();
@@ -54,7 +53,7 @@ const acceptInvite = catchAsync(async (req, res) => {
   const token = req.params.token;
   const { password } = req.body;
   const payload = await tokenService.generateConsoleUserPayloadFromToken(token);
-  const user = await consoleUserService.createConsoleUser({ ...payload, password });
+  const user = await consoleUserService.updateConsoleUserByEmail(payload.workmail, { password, status: 'active' });
   res.send({ user });
 });
 
@@ -63,6 +62,6 @@ module.exports = {
   getConsoleUsers,
   updateConsoleUserStatus,
   updateConsoleUser,
-  inviteConsoleUser,
+  consoleUserInvite,
   acceptInvite,
 };
