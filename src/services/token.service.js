@@ -82,12 +82,12 @@ const verifyToken = async (token, type) => {
 const verifyCode = async (code, userId) => {
   const tokenDoc = await Token.findOne({ token: code, type: tokenTypes.VERIFY_EMAIL, user: userId, blacklisted: false });
   if (!tokenDoc) {
-    throw new Error('Token not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Token not found');
   }
   if (hasExpired(tokenDoc)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Token expired!');
   }
-  await Token.deleteOne({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
+  await Token.deleteOne({ user: userId, type: tokenTypes.VERIFY_EMAIL });
   return tokenDoc;
 };
 
@@ -143,6 +143,7 @@ const generateResetPasswordToken = async (email, userModel) => {
   if (!userModel) {
     userModel = 'PortalUser';
   }
+
   let user;
   if (userModel == 'PortalUser') {
     user = await portalUserService.getPortalUserByEmail(email);
@@ -199,6 +200,20 @@ const generateVerifyEmailCode = async (user) => {
 const hasOTPExpired = (otpDoc) => {
   const expiresIn = moment().diff(otpDoc.createdAt, 'minutes');
   return expiresIn >= config.jwt.verifyOTPExpirationMinutes;
+};
+
+/**
+ * Generate update email code
+ * @param {User} user
+ * @returns {Promise<string>}
+ */
+const generateUpdateEmailCode = async (user) => {
+  // delete previous update email code to invalidate it
+  await Token.deleteOne({ user: user.id, type: tokenTypes.UPDATE_EMAIL });
+  const code = _.random(100000, 999999);
+  const expires = moment().add(config.jwt.updateEmailExpirationMinutes, 'minutes');
+  await saveToken(code, user.id, expires, tokenTypes.UPDATE_EMAIL);
+  return code;
 };
 
 // Method to generate  OTP
@@ -281,6 +296,7 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailCode,
+  generateUpdateEmailCode,
   generateUserAccessOTP,
   generateUpdateEmailCode,
   verifyAccessOTP,

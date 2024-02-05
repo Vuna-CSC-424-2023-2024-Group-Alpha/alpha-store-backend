@@ -11,7 +11,14 @@ const createPortalUser = async (userBody) => {
   if (await PortalUser.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  return PortalUser.create(userBody);
+  
+  // create security object
+  const security = {
+    password: userBody.password,
+  };
+  userBody.security = security;
+
+  return await PortalUser.create(userBody);
 };
 
 /**
@@ -34,7 +41,7 @@ const queryPortalUsers = async (filter, options) => {
  * @returns {Promise<PortalUser>}
  */
 const getPortalUserById = async (id) => {
-  return PortalUser.findById(id);
+  return await PortalUser.findById(id);
 };
 
 /**
@@ -43,7 +50,7 @@ const getPortalUserById = async (id) => {
  * @returns {Promise<PortalUser>}
  */
 const getPortalUserByEmail = async (email) => {
-  return PortalUser.findOne({ email });
+  return await PortalUser.findOne({ email });
 };
 
 /**

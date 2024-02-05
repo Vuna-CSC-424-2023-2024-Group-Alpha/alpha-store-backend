@@ -5,20 +5,20 @@ const portalAuthController = require('../../controllers/portal.auth.controller')
 const auth = require('../../middlewares/auth');
 
 const router = express.Router();
-/** Public Endpoints */
+
 router.post('/create-account', validate(portalAuthValidation.createAccount), portalAuthController.createAccount);
 router.post('/login', validate(portalAuthValidation.login), portalAuthController.login);
+router.patch('/update-OTP-option', auth(), portalAuthController.updateOtpOption);
+router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
+router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), portalAuthController.refreshTokens);
 router.post('/reset-password', validate(portalAuthValidation.resetPassword), portalAuthController.resetPassword);
 router.put('/set-new-password/:token', validate(portalAuthValidation.setNewPassword), portalAuthController.setNewPassword);
-router.post('/refresh-tokens', validate(portalAuthValidation.refreshTokens), portalAuthController.refreshTokens);
-/** Authenticated Endpoints */
-router.post('/resend-verification-email', auth(), portalAuthController.resendVerificationEmail);
-router.post('/logout', validate(portalAuthValidation.logout), portalAuthController.logout);
-router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
 router.post('/update-email', auth(), validate(portalAuthValidation.updateEmail), portalAuthController.updateEmail);
 router.patch('/update-email/:code', validate(portalAuthValidation.confirmUpdateEmail), portalAuthController.confirmUpdateEmail);
+router.post('/resend-verification-email', auth(), portalAuthController.resendVerificationEmail);
+router.post('/verify-email', auth(), validate(portalAuthValidation.verifyEmail), portalAuthController.verifyEmail);
 router.post('/verify-otp', auth(), validate(portalAuthValidation.verifyOTP), portalAuthController.verifyOTP);
-router.patch('/update-OTP-option', auth(), portalAuthController.updateOtpOption);
+router.post('/resend-otp', auth(), portalAuthController.resendLoginOTP);
 
 module.exports = router;
 
@@ -33,7 +33,7 @@ module.exports = router;
  * @swagger
  * /portal/auth/create-account:
  *   post:
- *     summary: Register new portal user
+ *     summary: Register as user
  *     tags: [Portal Auth]
  *     requestBody:
  *       required: true
@@ -44,7 +44,6 @@ module.exports = router;
  *             required:
  *               - firstName
  *               - lastName
- *               - phoneNumber
  *               - email
  *               - password
  *             properties:
@@ -56,8 +55,6 @@ module.exports = router;
  *                 type: string
  *                 format: email
  *                 description: must be unique
- *               phoneNumber:
- *                 type: string
  *               password:
  *                 type: string
  *                 format: password
@@ -67,8 +64,7 @@ module.exports = router;
  *               firstName: John
  *               lastName: Doe
  *               email: fake@example.com
- *               phoneNumber: 0800 000 0000
- *               password: P@ssword!Example
+ *               password: password1
  *     responses:
  *       "201":
  *         description: Created
@@ -78,44 +74,11 @@ module.exports = router;
  *               type: object
  *               properties:
  *                 user:
- *                   $ref: '#/components/schemas/PortalUser'
+ *                   $ref: '#/components/schemas/User'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
- */
-
-/**
- * @swagger
- * /portal/auth/resend-verification-email:
- *   post:
- *     summary: Resend verification email
- *     description: Send new verification code to the user for email verification.
- *     tags: [Portal Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 description: Porta User's email address.
- *             example:
- *               email: user@example.com
- *     responses:
- *       "204":
- *         description: No content
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
  */
 
 /**
@@ -166,51 +129,6 @@ module.exports = router;
  *               message: Invalid email or password
  */
 
-
-/**
- * @swagger
- * /portal/auth/verify-email:
- *   post:
- *     summary: Verify email using verification code
- *     description: Verify email during account creation, using the 6 digits verification code sent to the email
- *     tags: [Portal Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               vCode:
- *                 type: string
- *                 description: The verification code received by the user's email.
- *                 example: "010101"
- *     responses:
- *       '200':
- *         description: Email successfully verified.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Success message indicating that the email has been verified.
- *       '400':
- *         description: Invalid email verification code or user not found.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       '401':
- *         description: Email verification failed.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-
-
 /**
  * @swagger
  * /portal/auth/logout:
@@ -243,6 +161,8 @@ module.exports = router;
  *   patch:
  *     summary: sets the use of the portalUser two factor authentication  to true or false
  *     tags: [Portal Auth]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -311,13 +231,14 @@ module.exports = router;
  *                 type: string
  *                 format: email
  *             example:
- *               email: fake@example.com
+ *               email: example@haqqman.agency
  *     responses:
  *       "204":
  *         description: No content
  *       "404":
  *         $ref: '#/components/responses/NotFound'
  */
+
 
 /**
  * @swagger
@@ -369,7 +290,6 @@ module.exports = router;
  *               message: Password reset failed
  */
 
-
 /**
  * @swagger
  * /portal/auth/update-email:
@@ -402,6 +322,7 @@ module.exports = router;
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  */
+
 
 /**
  * @swagger
@@ -437,11 +358,12 @@ module.exports = router;
  *         $ref: '#/components/responses/Unauthorized'
  */
 
+
 /**
  * @swagger
  * /portal/auth/verify-otp:
  *   post:
- *     summary: Verify Portal access with OTP
+ *     summary: Verify OTP for Portal User
  *     description: Verify the OTP sent to the portal user after successful login.
  *     tags: [Portal Auth]
  *     security:
@@ -458,7 +380,7 @@ module.exports = router;
  *               otp:
  *                 type: string
  *             example:
- *               otp: 392920
+ *               otp: "392920"
  *     responses:
  *       "204":
  *         description: No content
@@ -481,3 +403,4 @@ module.exports = router;
  *               code: 401
  *               message: Access verification with OTP failed
  */
+

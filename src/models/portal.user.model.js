@@ -28,17 +28,24 @@ const portalUserSchema = mongoose.Schema(
         }
       },
     },
-    password: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 8,
-      validate(value) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error('Password must contain at least one letter and one number');
-        }
+    security: {
+      password: {
+        type: String,
+        trim: true,
+        minlength: 8,
+        validate(value) {
+          if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
+            throw new Error('Password must contain at least one letter and one number');
+          }
+        },
+        private: true, // used by the toJSON plugin
       },
-      private: true, // used by the toJSON plugin
+      authProvider: {
+        type: String,
+        required: true,
+        enum: ['credentials'], // more to be added
+        default: 'credentials',
+      },
     },
 
     dateOfBirth: {
@@ -98,16 +105,17 @@ portalUserSchema.statics.isEmailTaken = async function (email, excludeUserId) {
  */
 portalUserSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
-  return bcrypt.compare(password, user.password);
+  return bcrypt.compare(password, user.security.password);
 };
 
 portalUserSchema.pre('save', async function (next) {
   const user = this;
-  if (user.isModified('password')) {
-    user.password = await bcrypt.hash(user.password, 8);
+  if (user.isModified('security.password')) {
+    user.security.password = await bcrypt.hash(user.security.password, 8);
   }
   next();
 });
+
 
 /**
  * @typedef PortalUser
