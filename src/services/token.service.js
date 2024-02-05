@@ -232,20 +232,6 @@ const generateUserAccessOTP = async (user) => {
 };
 
 /**
- * Generate update email code
- * @param {User} user
- * @returns {Promise<string>}
- */
-const generateUpdateEmailCode = async (user) => {
-  // delete previous update email code to invalidate it
-  await Token.deleteOne({ user: user.id, type: tokenTypes.UPDATE_EMAIL });
-  const code = _.random(100000, 999999);
-  const expires = moment().add(config.jwt.updateEmailExpirationMinutes, 'minutes');
-  await saveToken(code, user.id, expires, tokenTypes.UPDATE_EMAIL);
-  return code;
-};
-
-/**
  * Verify OTP and return OTP doc (or throw an error if it is not valid)
  * @param {string} userOTP
  * @param {string} type

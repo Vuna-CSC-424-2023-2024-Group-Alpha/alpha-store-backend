@@ -76,22 +76,6 @@ const PortalUserPasswordUpdateAlert = async (payload) => {
   });
 };
 
-// Sends email to existing user to update Email
-const PortalUserUpdateEmail = async (payload) => {
-  const { to, firstName, code } = payload;
-
-  client.sendEmailWithTemplate({
-    From: MAIL_FROM_PORTAL,
-    To: to,
-    TemplateId: 33381234,
-    TemplateModel: {
-      firstName,
-      code,
-      portalUrl,
-    },
-  });
-};
-
 // Sends an OTP to grant access to an existing portal user.
 const PortalUserVerifyAccessWithOTP = async (payload) => {
   const { to, firstName, otp } = payload;
@@ -197,13 +181,12 @@ const ConsoleUserResetPassword = async (payload) => {
 
 module.exports = {
   PortalWelcome,
-  PortalUserUpdateEmail,
   PortalUserEmailVerificationCode,
   PortalUserResetPassword,
   PortalUserPasswordUpdateAlert,
   PortalUserUpdateEmail,
   PortalUserVerifyAccessWithOTP,
-  VerifyConsoleUserAccessWithOTP,
-  InviteConsoleUser,
-  recoverConsoleAccessRequest,
+  ConsoleVerifyUserAccessWithOTP,
+  ConsoleUserInvite,
+  ConsoleRecoverAccessRequest,
 };

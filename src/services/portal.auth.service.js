@@ -54,40 +54,6 @@ const refreshAuth = async (refreshToken) => {
   }
 };
 
-const resetPassword = async (payload) => {
-  try {
-    const user = await portalUserService.getPortalUserByEmail(payload.email);
-    if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'No user exists for this email');
-    }
-
-    const resetPasswordToken = await tokenService.generateResetPasswordToken(payload.email);
-    // Get the agency app using the slug 'example-app'
-    const agencyApp = await appService.getAppBySlug('example-app');
-    if (!agencyApp) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'App does not exist for this user');
-    }
-
-    // send reset password email
-    await emailService.PortalUserResetPassword({
-      to: payload.email,
-      token: resetPasswordToken,
-      firstName: user.firstName,
-      portalUrl: agencyApp.portalUrl,
-    });
-
-    return { message: 'Password reset email sent successfully!' };
-  } catch (error) {
-      console.log(error);
-    if (error instanceof ApiError) {
-      throw error; // Forward the ApiError with the appropriate status code and message
-    } else {
-      // For unexpected errors, throw a generic error message
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred during password reset');
-    }
-  }
-};
-
 /**
  * Set new password after request to reset password
  * @param {string} setNewPassword
