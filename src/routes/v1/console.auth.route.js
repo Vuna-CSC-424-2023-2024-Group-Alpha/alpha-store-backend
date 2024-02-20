@@ -200,7 +200,7 @@ module.exports = router;
  *               otp:
  *                 type: string
  *             example:
- *               otp: 392920
+ *               otp: "392920"
  *     responses:
  *       "204":
  *         description: No content

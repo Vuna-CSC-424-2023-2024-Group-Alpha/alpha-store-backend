@@ -290,7 +290,6 @@ module.exports = router;
  *               message: Password reset failed
  */
 
-
 /**
  * @swagger
  * /portal/auth/update-email:
@@ -324,6 +323,7 @@ module.exports = router;
  *         $ref: '#/components/responses/Unauthorized'
  */
 
+
 /**
  * @swagger
  * /portal/auth/update-email/{code}:
@@ -356,103 +356,6 @@ module.exports = router;
  *         $ref: '#/components/responses/BadRequest'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
- */
-
-
-/**
- * @swagger
- * /portal/auth/resend-verification-email:
- *   post:
- *     summary: Resend verification email
- *     description: Resend verification code to the user for email verification.
- *     tags: [Portal Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 description: Porta User's email address.
- *             example:
- *               email: user@haqqman.agency
- *     responses:
- *       "204":
- *         description: No content
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- */
-
-/**
- * @swagger
- * /portal/auth/resend-otp:
- *   post:
- *     summary: Resend login OTP
- *     description: Resend login OTP
- *     tags: [Portal Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       "204":
- *         description: No content
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- */
-
-/**
- * @swagger
- * /portal/auth/verify-email:
- *   post:
- *     summary: Verify email using verification code
- *     description: Verify email during account creation, using the 6 digits verification code sent to the email
- *     tags: [Portal Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               vCode:
- *                 type: string
- *                 description: The verification code received by the user's email.
- *                 example: "010101"
- *     responses:
- *       '200':
- *         description: Email successfully verified.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Success message indicating that the email has been verified.
- *       '400':
- *         description: Invalid email verification code or user not found.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       '401':
- *         description: Email verification failed.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 
 

@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const shortid = require('shortid');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const portalUserService = require('./portal.user.service');
+const consoleUserService = require('./console.user.service');
 const { Token } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
@@ -146,7 +148,7 @@ const generateResetPasswordToken = async (email, userModel) => {
   if (userModel == 'PortalUser') {
     user = await portalUserService.getPortalUserByEmail(email);
   } else {
-    user = await consoleUserService.getConsoleUserByWorkmail(workmail);
+    user = await consoleUserService.getConsoleUserByWorkmail(email);
   }
 
   if (!user) {
@@ -157,6 +159,23 @@ const generateResetPasswordToken = async (email, userModel) => {
   await saveToken(resetPasswordToken, user.id, expires, tokenTypes.RESET_PASSWORD);
   return resetPasswordToken;
 };
+
+/**
+ * Generate invite console user token
+ * @param {object} payload (contains role, firstName, lastName, email)
+ * @returns {Promise<string>}
+ */
+const generateConsoleUserInviteToken = async (payload) => {
+  const JWTPayload = {
+    ...payload,
+    iat: moment().unix(),
+    exp: moment().add(72, 'hours').unix(),
+    type: tokenTypes.INVITE_CONSOLE_USER,
+    consoleUserId: shortid.generate(),
+  };
+  return jwt.sign(JWTPayload, config.jwt.secret);
+};
+
 
 /**
  * Generate verify email code
@@ -219,7 +238,7 @@ const generateUserAccessOTP = async (user) => {
  * @returns {Promise<Token>}
  */
 const verifyAccessOTP = async (userOTP, userId) => {
-  const otpDoc = await Token.findOne({ otp: userOTP, type: tokenTypes.VERIFY_OTP, user: userId, blacklisted: false });
+  const otpDoc = await Token.findOne({ token: userOTP, type: tokenTypes.VERIFY_OTP, user: userId, blacklisted: false });
   if (!otpDoc) {
     throw new ApiError(httpStatus.NOT_FOUND, 'OTP not found');
   }
@@ -265,7 +284,9 @@ module.exports = {
   generateVerifyEmailCode,
   generateUpdateEmailCode,
   generateUserAccessOTP,
+  generateUpdateEmailCode,
   verifyAccessOTP,
   generateInviteConsoleUserToken,
   generateConsoleUserPayloadFromToken,
+  generateConsoleUserInviteToken,
 };

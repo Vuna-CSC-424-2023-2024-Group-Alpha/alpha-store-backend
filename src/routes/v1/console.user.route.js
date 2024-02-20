@@ -32,9 +32,9 @@ router.patch(
 
 router.post(
   '/invite',
-  auth('inviteConsoleUser'),
-  validate(consoleUserValidation.inviteConsoleUser),
-  consoleUserController.inviteConsoleUser
+  auth('consoleUserInvite'),
+  validate(consoleUserValidation.consoleUserInvite),
+  consoleUserController.consoleUserInvite
 );
 
 router.post('/accept-invite/:token', validate(consoleUserValidation.acceptInvite), consoleUserController.acceptInvite);
@@ -44,7 +44,7 @@ module.exports = router;
 /**
  * @swagger
  * tags:
- *   name: Console Teams
+ *   name: Console Team
  *   description: Console User Team for Management
  */
 
@@ -54,7 +54,7 @@ module.exports = router;
  *   get:
  *     summary: Get all console users
  *     description: Retrieves all console users that make up a team
- *     tags: [Console Teams]
+ *     tags: [Console Team]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -108,7 +108,7 @@ module.exports = router;
  *   patch:
  *     summary: Update a Console user
  *     description: Update a Console User account with the provided {consoleUserId}.
- *     tags: [Console Teams]
+ *     tags: [Console Team]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -173,7 +173,7 @@ module.exports = router;
  *   patch:
  *     summary: Update a Console user status
  *     description: Update status of the console user account of the provided {consoleUserId}.
- *     tags: [Console Teams]
+ *     tags: [Console Team]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -214,7 +214,7 @@ module.exports = router;
  *   post:
  *     summary: Invite a new team member (Console user)
  *     description: Invite a new team member (Console user) to the console, the user to be invited receives an mail with link to complete the invite.
- *     tags: [Console Teams]
+ *     tags: [Console Team]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -255,7 +255,7 @@ module.exports = router;
  *   post:
  *     summary: Accept invite of a new team member, who is a Console user
  *     description: Accept invite of a new team member (Console user) to the console, this completes the invitation of a new console user.
- *     tags: [Console Teams]
+ *     tags: [Console Team]
  *     security:
  *       - bearerAuth: []
  *     parameters:

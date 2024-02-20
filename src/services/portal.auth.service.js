@@ -54,40 +54,6 @@ const refreshAuth = async (refreshToken) => {
   }
 };
 
-const resetPassword = async (payload) => {
-  try {
-    const user = await portalUserService.getPortalUserByEmail(payload.email);
-    if (!user) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'No user exists for this email');
-    }
-
-    const resetPasswordToken = await tokenService.generateResetPasswordToken(payload.email);
-    // Get the agency app using the slug 'example-app'
-    const agencyApp = await appService.getAppBySlug('example-app');
-    if (!agencyApp) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'App does not exist for this user');
-    }
-
-    // send reset password email
-    await emailService.PortalUserResetPassword({
-      to: payload.email,
-      token: resetPasswordToken,
-      firstName: user.firstName,
-      portalUrl: agencyApp.portalUrl,
-    });
-
-    return { message: 'Password reset email sent successfully!' };
-  } catch (error) {
-      console.log(error);
-    if (error instanceof ApiError) {
-      throw error; // Forward the ApiError with the appropriate status code and message
-    } else {
-      // For unexpected errors, throw a generic error message
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred during password reset');
-    }
-  }
-};
-
 /**
  * Set new password after request to reset password
  * @param {string} setNewPassword
@@ -166,7 +132,7 @@ const verifyEmail = async (vCode, userId) => {
 const verifyOTP = async (otp, userId) => {
   try {
     const otpDoc = await tokenService.verifyAccessOTP(otp, userId);
-    const user = await consoleUserService.getConsoleUserById(otpDoc.user);
+    const user = await portalUserService.getPortalUserById(otpDoc.user);
     if (!user) {
       throw new ApiError(httpStatus.NOT_FOUND, 'OTP does not exist');
     }
@@ -194,27 +160,29 @@ const updateOtpOption = async (req) => {
   }
 };
 
-/**
- * Update password of portal user
- */
-const updatePassword = async (userId, newPassword) => {
+const resetPassword = async (payload) => {
   try {
-    // Update the user's password
-    await portalUserService.updatePortalUserById(userId, { password: newPassword });
+    const user = await portalUserService.getPortalUserByEmail(payload.email);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'No user exists for this email');
+    }
+
+    const resetPasswordToken = await tokenService.generateResetPasswordToken(payload.email);
+    // send reset password email
+    await emailService.PortalUserResetPassword({
+      to: payload.email,
+      token: resetPasswordToken,
+      firstName: user.firstName,
+    });
+
+    return { message: 'Password reset email sent successfully!' };
   } catch (error) {
-    // If an error occurs during the update, handle it appropriately
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      // If the provided userId is invalid (not a valid ObjectId)
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid user ID');
-    } else if (error.name === 'ValidationError') {
-      // If the provided newPassword is invalid or doesn't meet validation criteria
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid password. Please provide a valid password.');
-    } else if (error.name === 'UserNotFoundError') {
-      // If the user with the given userId is not found in the database
-      throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+    console.log(error);
+    if (error instanceof ApiError) {
+      throw error; // Forward the ApiError with the appropriate status code and message
     } else {
-      // For any other unexpected error, throw a generic error message
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred while updating the password.');
+      // For unexpected errors, throw a generic error message
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'An unexpected error occurred during password reset');
     }
   }
 };
@@ -261,4 +229,6 @@ module.exports = {
   updateEmail,
   confirmUpdateEmail,
   updateOtpOption,
+  updateEmail,
+  confirmUpdateEmail,
 };

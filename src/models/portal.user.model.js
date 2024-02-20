@@ -48,6 +48,10 @@ const portalUserSchema = mongoose.Schema(
       },
     },
 
+    dateOfBirth: {
+      type: Date,
+    },
+
     otpOption: {
       type: Boolean,
       default: true,
@@ -61,6 +65,12 @@ const portalUserSchema = mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+
+    status: {
+      type: String,
+      default: 'active',
+      enum: ['active', 'inactive'],
     },
 
     app: {

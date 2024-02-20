@@ -41,7 +41,7 @@ const login = catchAsync(async (req, res) => {
     // send user OTP
     const accessOTP = await tokenService.generateUserAccessOTP(user);
 
-    await emailService.VerifyPortalUserAccessWithOTP({
+    await emailService.PortalVerifyUserAccessWithOTP({
       to: user.email,
       firstName: user.firstName,
       otp: accessOTP,
@@ -216,5 +216,7 @@ module.exports = {
   updatePassword,
   verifyEmail,
   verifyOTP,
+  updateEmail,
+  confirmUpdateEmail,
   resendLoginOTP,
 };

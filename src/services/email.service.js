@@ -76,22 +76,6 @@ const PortalUserPasswordUpdateAlert = async (payload) => {
   });
 };
 
-// Sends email to existing user to update Email
-const PortalUserUpdateEmail = async (payload) => {
-  const { to, firstName, code } = payload;
-
-  client.sendEmailWithTemplate({
-    From: MAIL_FROM_PORTAL,
-    To: to,
-    TemplateId: 33381234,
-    TemplateModel: {
-      firstName,
-      code,
-      portalUrl,
-    },
-  });
-};
-
 // Sends an OTP to grant access to an existing portal user.
 const PortalUserVerifyAccessWithOTP = async (payload) => {
   const { to, firstName, otp } = payload;
@@ -109,10 +93,25 @@ const PortalUserVerifyAccessWithOTP = async (payload) => {
   });
 };
 
+// Sends email to existing customers to update Email
+const PortalUserUpdateEmail = async (payload) => {
+  const { to, firstName, code } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 33381234, // Postmark: Email Template for PortalUserUpdateEmail
+    TemplateModel: {
+      firstName,
+      code,
+      portalUrl,
+    },
+  });
+};
 
 // Sends an OTP to grant access to an existing console user.
-const VerifyConsoleUserAccessWithOTP = async (payload) => {
-  const { to, firstName, otp, appName, logoEmail, portalUrl, consoleUrl } = payload;
+const ConsoleVerifyUserAccessWithOTP = async (payload) => {
+  const { to, firstName, otp, appName, logoEmail } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_CONSOLE,
@@ -124,38 +123,36 @@ const VerifyConsoleUserAccessWithOTP = async (payload) => {
       otp,
       appName,
       logoEmail,
-      portalUrl,
       consoleUrl,
     },
   });
 };
 
-// Sends email inviting a console user to join a team
-const InviteConsoleUser = async (payload) => {
-  const { to, firstName, token, appName, consoleUrl, portalUrl, logoEmail } = payload;
-  client.sendEmailWithTemplate({
+// Sends email inviting console user to join team
+const ConsoleUserInvite = async (payload) => {
+  const { to, firstName, token, inviterFullName, logoEmail, consoleId } = payload;  client.sendEmailWithTemplate({
     From: MAIL_FROM_CONSOLE,
     To: to,
     TemplateId: 31422776, //TODO: Replace with the right TemplateId for "InviteConsoleUser"
     TemplateModel: {
       firstName,
+      inviterFullName,
       token,
-      appName,
+      consoleId,
       consoleUrl,
-      portalUrl,
       logoEmail,
     },
   });
 };
 
 // Sends Email to console user to recover access
-const recoverConsoleAccessRequest = async (payload) => {
+const ConsoleRecoverAccessRequest = async (payload) => {
   const { to, firstName, lastName } = payload;
 
   client.sendEmailWithTemplate({
     From: MAIL_FROM_DEFAULT,
     To: to,
-    TemplateId: 25815659, //TODO: Replace with the right TemplateId for "recoverConsoleAccessRequest"
+    TemplateId: 25815659, //TODO: Replace with the right TemplateId for "ConsoleRecoverAccessRequest"
     TemplateModel: {
       to,
       firstName,
@@ -164,6 +161,24 @@ const recoverConsoleAccessRequest = async (payload) => {
   });
 };
 
+// Sends email to existing customers to reset password
+const ConsoleUserResetPassword = async (payload) => {
+  const { to, email, firstName, token } = payload;
+
+  client.sendEmailWithTemplate({
+    From: MAIL_FROM_PORTAL,
+    To: to,
+    TemplateId: 25815659, // Postmark: Email Template for "ConsoleUserResetPassword"
+    TemplateModel: {
+      email,
+      firstName,
+      token,
+      consoleUrl,
+    },
+  });
+};
+
+
 module.exports = {
   PortalWelcome,
   PortalUserEmailVerificationCode,
@@ -171,7 +186,7 @@ module.exports = {
   PortalUserPasswordUpdateAlert,
   PortalUserUpdateEmail,
   PortalUserVerifyAccessWithOTP,
-  VerifyConsoleUserAccessWithOTP,
-  InviteConsoleUser,
-  recoverConsoleAccessRequest,
+  ConsoleVerifyUserAccessWithOTP,
+  ConsoleUserInvite,
+  ConsoleRecoverAccessRequest,
 };

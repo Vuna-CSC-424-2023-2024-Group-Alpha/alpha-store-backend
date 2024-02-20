@@ -25,7 +25,7 @@ const createConsoleUser = async (body) => {
  * @returns {Promise<[ConsoleUser]>}
  */
 const getConsoleUsers = async () => {
-  return ConsoleUser.find({});
+  return await ConsoleUser.find({});
 };
 
 /**
@@ -34,7 +34,7 @@ const getConsoleUsers = async () => {
  * @returns {Promise<ConsoleUser>}
  */
 const getConsoleUser = async (id) => {
-  return ConsoleUser.findById(id);
+  return await ConsoleUser.findById(id);
 };
 
 /**
@@ -43,7 +43,7 @@ const getConsoleUser = async (id) => {
  * @returns {Promise<ConsoleUser>}
  */
 const getConsoleUserByWorkmail = async (workmail) => {
-  return ConsoleUser.findOne({ workmail });
+  return await ConsoleUser.findOne({ workmail });
 };
 
 /**
@@ -75,6 +75,17 @@ const updateConsoleUserStatus = async (consoleUserId, status) => {
   await ConsoleUser.updateOne({ _id: consoleUserId }, { status });
 };
 
+/**
+ * Update console user by workmail
+ * @param {ObjectId}
+ * @param {string} body
+ * @returns {Promise<Void>}
+ */
+const updateConsoleUserByEmail = async (workmail, body) => {
+  return await ConsoleUser.findOneAndUpdate({ workmail }, body, { new: true });
+};
+
+
 module.exports = {
   createConsoleUser,
   getConsoleUsers,
@@ -82,4 +93,5 @@ module.exports = {
   getConsoleUserByWorkmail,
   updateConsoleUser,
   updateConsoleUserStatus,
+  updateConsoleUserByEmail,
 };
