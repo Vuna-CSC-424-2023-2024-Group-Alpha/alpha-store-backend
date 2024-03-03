@@ -7,12 +7,12 @@ const consoleUserController = require('../../controllers/console.user.controller
 const router = express.Router();
 
 // 
-router.get('/', auth('getUsers'), consoleUserController.getConsoleUsers);
+router.get('/', auth('getPortalUsers'), consoleUserController.getConsoleUsers);
 
 
 router.get(
   '/:consoleUserId',
-  auth('getUsers'),
+  auth('getPortalUsers'),
   validate(consoleUserValidation.getConsoleUser),
   consoleUserController.getConsoleUser
 );

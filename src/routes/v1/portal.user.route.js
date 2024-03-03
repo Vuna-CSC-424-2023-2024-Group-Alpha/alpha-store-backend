@@ -8,14 +8,14 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageUsers'), validate(portalUserValidation.createUser), portalUserController.createUser)
-  .get(auth('getUsers'), validate(portalUserValidation.getUsers), portalUserController.getUsers);
+  .post(auth('manageUsers'), validate(portalUserValidation.createPortalUser), portalUserController.createPortalUser)
+  .get(auth('getPortalUsers'), validate(portalUserValidation.getPortalUsers), portalUserController.getPortalUsers);
 
 router
   .route('/:userId')
-  .get(auth('getUsers'), validate(portalUserValidation.getUser), portalUserController.getUser)
-  .patch(auth('manageUsers'), validate(portalUserValidation.updateUser), portalUserController.updateUser)
-  .delete(auth('manageUsers'), validate(portalUserValidation.deleteUser), portalUserController.deleteUser);
+  .get(auth('getPortalUsers'), validate(portalUserValidation.getPortalUser), portalUserController.getPortalUser)
+  .patch(auth('manageUsers'), validate(portalUserValidation.updatePortalUser), portalUserController.updatePortalUser)
+  .delete(auth('manageUsers'), validate(portalUserValidation.deletePortalUser), portalUserController.deletePortalUser);
 
 
 module.exports = router;
