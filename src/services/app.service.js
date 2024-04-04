@@ -52,10 +52,28 @@ const updatePortalOtpOption = async (req) => {
   }
 };
 
+const updateAppStatus = async (appId, body) => {
+  const app = await App.findOne({ _id: appId });
+  if (!app) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'App not found');
+  }
+
+  if (body.portalStatus) {
+    app.status.portal = body.portalStatus;
+  }
+  if (body.websiteStatus) {
+    app.status.website = body.websiteStatus;
+  }
+
+  await app.save();
+  return app;
+};
+
 module.exports = {
   // createApp,
   getAllApps,
   getApp,
   getAppBySlug,
   updatePortalOtpOption,
+  updateAppStatus,
 };
