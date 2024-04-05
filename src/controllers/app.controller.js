@@ -23,9 +23,15 @@ const updatePortalOtpOption = catchAsync(async (req, res) => {
   res.json({ app });
 });
 
+const updateAppStatus = catchAsync(async (req, res) => {
+  const app = await appService.updateAppStatus(req.params.appId, req.body);
+  res.json({ app });
+});
+
 module.exports = {
   getApp,
   getAllApps,
   // createApp,
   updatePortalOtpOption,
+  updateAppStatus,
 };

@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { objectId } = require('./custom.validation');
 
 const createApp = {
   body: Joi.object().keys({
@@ -22,6 +23,17 @@ const createApp = {
   }),
 };
 
+const updateAppStatus = {
+  params: {
+    appId: Joi.string().required().custom(objectId),
+  },
+  body: Joi.object().keys({
+    portalStatus: Joi.string().valid('online', 'offline'),
+    websiteStatus: Joi.string().valid('online', 'offline'),
+  }).min(1),
+};
+
 module.exports = {
   createApp,
+  updateAppStatus,
 };

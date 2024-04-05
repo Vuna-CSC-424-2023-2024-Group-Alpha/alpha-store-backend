@@ -37,9 +37,16 @@ const appSchema = new mongoose.Schema(
     },
 
     status: {
-      type: String,
-      enum: ['active', 'inactive'],
-      default: 'active',
+      portal: {
+        type: String,
+        enum: ['online', 'offline'],
+        default: 'online',
+      },
+      website: {
+        type: String,
+        enum: ['online', 'offline'],
+        default: 'online',
+      },
     },
 
     slug: {

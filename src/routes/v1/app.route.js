@@ -1,4 +1,5 @@
 const express = require('express');
+const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const { appController } = require('../../controllers');
 const { appValidation } = require('../../validations');
@@ -6,11 +7,12 @@ const { appValidation } = require('../../validations');
 const router = express.Router();
 
 router.get('/', appController.getAllApps);
+router.patch('/update-status/:appId', auth(), validate(appValidation.updateAppStatus), appController.updateAppStatus);
 
 //Disabled by default unless needed!"
 // router.post('/create', validate(appValidation.createApp), appController.createApp);
 
-router.patch('/use-OTP', appController.updatePortalOtpOption);
+router.patch('/use-OTP', auth(), appController.updatePortalOtpOption);
 
 module.exports = router;
 
@@ -107,6 +109,8 @@ module.exports = router;
  *   patch:
  *     summary: sets the two factor authentication  to required or optional for the portalUser
  *     tags: [Console App]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -121,6 +125,42 @@ module.exports = router;
  *                  type: objectId
  *                portalOtpOption:
  *                  type: string
+ *     responses:
+ *       "204":
+ *         description: No content
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+
+/**
+ * @swagger
+ * /app/update-status/{appId}:
+ *   patch:
+ *     summary: Update the status (portal, website) of the app
+ *     tags: [Console App]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: appId
+ *         required: true
+ *         description: ID of the app
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *                portalStatus:
+ *                  type: string
+ *                  example: online
+ *                websiteStatus:
+ *                  type: string
+ *                  example: online
  *     responses:
  *       "204":
  *         description: No content
