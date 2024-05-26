@@ -11,52 +11,62 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, firstName, lastName, password } = req.body;
+    const {
+      email,
+      matricNumber,
+      firstName,
+      lastName,
+      password,
+      profilePicture,
+    } = req.body;
 
     const emailExists = await User.findOne({ email });
 
     if (emailExists) {
       return res.status(409).json({
-        message: "User With this email already exists",
+        message: "User with this email already exists",
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User({
+    const newUser = new User({
       email,
+      matricNumber,
       firstName,
       lastName,
       password: hashedPassword,
+      profilePicture,
     });
 
     const userDetails = await newUser.save();
     const authToken = generateAuthToken(userDetails._id);
+
+    const fullName = `${userDetails.lastName} ${userDetails.firstName}`;
+    await sendSignupSuccessMail(email, fullName);
     res.status(201).json({
       userDetails,
       authToken,
     });
-    const fullName = `${userDetails.lastName} ${userDetails.firstName}`;
-    await sendSignupSuccessMail(email, fullName);
   } catch (error) {
     console.log(
-      `An unexpected error has occured, please try again later ${error}`
+      `An unexpected error has occurred, please try again later: ${error}`
     );
     res.status(500).json({
-      message: "An unexpected error has occured, please try again later",
+      message: "An unexpected error has occurred, please try again later",
     });
   }
 });
 
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { matricNumber, password } = req.body;
 
-    const userDetails = await User.findOne({ email });
+    const userDetails = await User.findOne({ matricNumber });
 
     if (!userDetails) {
       return res.status(404).json({
-        message: "No User Is Registered With This Email Address",
+        message: "No User Is Registered With This matricNumber Address",
       });
     }
 
@@ -72,7 +82,7 @@ router.post("/login", async (req, res) => {
       } else {
         // Reset login attempts if the block duration has passed
         await User.updateOne(
-          { email },
+          { matricNumber },
           { $set: { blockLoginAttempt: false, loginAttempts: 0 } }
         );
       }
@@ -89,14 +99,17 @@ router.post("/login", async (req, res) => {
       // Increment failed login attempts and update last failed login timestamp
       const maxLoginAttempts = 6;
       await User.updateOne(
-        { email },
+        { matricNumber },
         { $inc: { loginAttempts: 1 }, $set: { lastFailedLogin: new Date() } }
       );
 
       // Block login if exceeded maximum attempts
       if (userDetails.loginAttempts + 1 >= maxLoginAttempts) {
         // +1 to include the current attempt
-        await User.updateOne({ email }, { $set: { blockLoginAttempt: true } });
+        await User.updateOne(
+          { matricNumber },
+          { $set: { blockLoginAttempt: true } }
+        );
       }
 
       return res.status(401).json({
@@ -105,7 +118,7 @@ router.post("/login", async (req, res) => {
     }
 
     // Reset login attempts to 0 on successful login
-    await User.updateOne({ email }, { $set: { loginAttempts: 0 } });
+    await User.updateOne({ matricNumber }, { $set: { loginAttempts: 0 } });
 
     const authToken = generateAuthToken(userDetails._id);
     res.status(200).json({
@@ -130,19 +143,67 @@ router.post("/forgotten-password/:email", async (req, res) => {
     if (!userExists) {
       return res.status(404).json({
         message:
-          "An Error has occured no can't reset password as no user is associated with this mail",
+          "Cannot reset password as no user is associated with this email.",
       });
     }
+
     const OTP = otpGenerator();
     userExists.forgottenPasswordOTP = OTP;
     userExists.timeOTPRequested = new Date();
     await userExists.save();
+
     const fullName = `${userExists.lastName} ${userExists.firstName}`;
+    await sendForgottenPasswordOTPMail(email, fullName, OTP);
     res.status(200).json({
       message: "OTP sent",
     });
     console.log(fullName);
-    await sendForgottenPasswordOTPMail(email, fullName, OTP);
+  } catch (error) {
+    console.log(
+      `An unexpected error has occurred, please try again later: ${error}`
+    );
+    res.status(500).json({
+      message: "An unexpected error has occurred, please try again later",
+    });
+  }
+});
+
+router.patch("/change-password", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    const userDetails = await User.findOne({ email });
+
+    if (!userDetails) {
+      return res.status(404).json({
+        message: "No User Is Registered With This Email Address",
+      });
+    }
+
+    const currentTime = new Date();
+    const otpRequestTime = new Date(userDetails.timeOTPRequested);
+    const otpValidityDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+    if (currentTime - otpRequestTime > otpValidityDuration) {
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+
+    if (userDetails.forgottenPasswordOTP !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    userDetails.password = hashedPassword;
+    userDetails.forgottenPasswordOTP = null;
+    userDetails.timeOTPRequested = null;
+    await userDetails.save();
+    res.status(200).json({
+      message: "Password changed successfully",
+    });
   } catch (error) {
     console.log(
       `An unexpected error has occurred, please try again later ${error}`
