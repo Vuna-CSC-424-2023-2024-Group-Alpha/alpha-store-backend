@@ -7,11 +7,20 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    matricNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     firstName: {
       type: String,
       required: true,
     },
     lastName: {
+      type: String,
+      required: true,
+    },
+    profilePicture: {
       type: String,
       required: true,
     },
