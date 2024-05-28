@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: {
+    bidAmount: {
       type: Number,
       required: true,
     },
@@ -14,9 +14,14 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    imageUrl: {
-      type: String,
+    imageUrls: {
+      type: [String],
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ["available", "out of stock", "discontinued"],
+      default: "available",
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
