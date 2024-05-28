@@ -6,19 +6,18 @@ import sendSignupSuccessMail from "../utilities/Email/sendSignupSuccessMail.mail
 import sendForgottenPasswordOTPMail from "../utilities/Email/sendForgottenPasswordOTPMail.mail.js";
 import { generateAuthToken } from "../utilities/handleAuthToken.js";
 import otpGenerator from "../utilities/otpGenerator.js";
+import uploadImageToCloudinary from "../utilities/uploadImageToCloudinary.js";
+import multer from "multer";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+router.post("/register", upload.single("image"), async (req, res) => {
   try {
-    const {
-      email,
-      matricNumber,
-      firstName,
-      lastName,
-      password,
-      profilePicture,
-    } = req.body;
+    const { email, matricNumber, firstName, lastName, password } = req.body;
+    const imageFile = req.file;
 
     const emailExists = await User.findOne({ email });
 
@@ -28,6 +27,15 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    if (!imageFile) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    const cloudinaryResult = await uploadImageToCloudinary(
+      imageFile.buffer,
+      imageFile.originalname
+    );
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -36,7 +44,7 @@ router.post("/register", async (req, res) => {
       firstName,
       lastName,
       password: hashedPassword,
-      profilePicture,
+      profilePicture: cloudinaryResult.secure_url,
     });
 
     const userDetails = await newUser.save();
