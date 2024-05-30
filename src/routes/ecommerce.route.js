@@ -13,7 +13,7 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post("/products", upload.array("images", 10), async (req, res) => {
+router.post("/products", upload.array("images", 5), async (req, res) => {
   try {
     const { name, bidAmount, description, categoryId } = req.body;
     const imageFiles = req.files;
@@ -73,7 +73,7 @@ router.patch("/product/status/:id", async (req, res) => {
   }
 });
 
-router.post("/categories", async (req, res) => {
+router.post("/category", async (req, res) => {
   try {
     const { name, description } = req.body;
 
